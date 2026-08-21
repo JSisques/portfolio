@@ -1,0 +1,63 @@
+<header class="site-header">
+  <div class="inner">
+    <div class="logo">j<span class="accent">sisques</span></div>
+    <nav>
+      <a href="#about">sobre mí</a>
+      <a href="#stack">stack</a>
+      <a href="#projects">proyectos</a>
+      <a href="#timeline">trayectoria</a>
+      <a href="https://blog.jsisques.net" target="_blank" rel="noopener">blog</a
+      >
+      <a href="#contact">contacto</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--bg-canvas);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .inner {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+  }
+
+  .logo .accent {
+    color: var(--accent);
+  }
+
+  nav {
+    display: flex;
+    gap: 24px;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+  }
+
+  nav a {
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+
+  @media (max-width: 640px) {
+    nav {
+      display: none;
+    }
+  }
+</style>
