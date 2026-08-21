@@ -1,0 +1,57 @@
+---
+interface Props {
+  tone?: 'neutral' | 'accent' | 'success' | 'warning' | 'danger';
+}
+
+const { tone = 'neutral' } = Astro.props;
+---
+
+<span class="badge" data-tone={tone}>
+  <slot />
+</span>
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: var(--ls-caps);
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: var(--radius-pill);
+    border: 1px solid transparent;
+  }
+
+  .badge[data-tone='neutral'] {
+    background: var(--bg-surface-raised);
+    color: var(--text-secondary);
+    border-color: var(--border-default);
+  }
+
+  .badge[data-tone='accent'] {
+    background: var(--accent-muted);
+    color: var(--accent-hover);
+    border-color: var(--accent-border);
+  }
+
+  .badge[data-tone='success'] {
+    background: oklch(65% 0.17 149 / 0.15);
+    color: var(--success);
+    border-color: oklch(65% 0.17 149 / 0.4);
+  }
+
+  .badge[data-tone='warning'] {
+    background: oklch(75% 0.16 75 / 0.15);
+    color: var(--warning);
+    border-color: oklch(75% 0.16 75 / 0.4);
+  }
+
+  .badge[data-tone='danger'] {
+    background: oklch(62% 0.21 25 / 0.15);
+    color: var(--danger);
+    border-color: oklch(62% 0.21 25 / 0.4);
+  }
+</style>

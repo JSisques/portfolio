@@ -1,0 +1,36 @@
+---
+interface Props {
+  hoverable?: boolean;
+  class?: string;
+}
+
+const { hoverable = false, class: className } = Astro.props;
+---
+
+<div class:list={['card', className]} data-hoverable={hoverable}>
+  <slot />
+</div>
+
+<style>
+  .card {
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    transition:
+      border-color var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out),
+      transform var(--dur-base) var(--ease-out);
+  }
+
+  .card[data-hoverable='true']:hover {
+    border-color: var(--accent-border);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+</style>
