@@ -13,6 +13,10 @@ const { hoverable = false, class: className } = Astro.props;
 
 <style>
   .card {
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
     background: var(--bg-surface);
     border: 1px solid var(--border-default);
     border-radius: var(--radius-lg);

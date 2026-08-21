@@ -11,7 +11,7 @@ interface Props {
 const { project } = Astro.props;
 ---
 
-<div class="reveal">
+<div class="reveal card-wrapper">
   <Card hoverable>
     <div class="head">
       <div class="title">{project.title}</div>
@@ -36,6 +36,10 @@ const { project } = Astro.props;
 </div>
 
 <style>
+  .card-wrapper {
+    height: 100%;
+  }
+
   .head {
     display: flex;
     justify-content: space-between;
@@ -72,7 +76,8 @@ const { project } = Astro.props;
   .links {
     display: flex;
     gap: 16px;
-    margin-top: 18px;
+    margin-top: auto;
+    padding-top: 18px;
     font-family: var(--font-mono);
     font-size: 0.8125rem;
   }
