@@ -1,17 +1,297 @@
 ---
-
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Button from '../components/Button.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import StackMarquee from '../components/StackMarquee.astro';
+import { projects } from '../data/projects';
+import { timeline } from '../data/timeline';
 ---
 
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
+    <meta
+      name="description"
+      content="Javier Plaza Sisqués — backend engineer especializado en TypeScript y NestJS: arquitecturas orientadas a eventos, Domain-Driven Design y CQRS."
+    />
     <title>Javier Plaza Sisqués</title>
   </head>
   <body>
-    <h1>Javier Plaza Sisqués</h1>
+    <Header />
+
+    <main>
+      <section class="hero-section reveal is-visible">
+        <div class="eyebrow">
+          // backend engineer, construyendo Gardenia ahora mismo
+        </div>
+        <h1>Diseño sistemas que aguantan<br />el paso del tiempo.</h1>
+        <p class="lead">
+          Soy Javier Plaza Sisques, backend engineer especializado en TypeScript
+          y NestJS: arquitecturas orientadas a eventos, Domain-Driven Design y
+          CQRS. Y la infraestructura, homelab propio incluido, que las sostiene.
+        </p>
+        <div class="actions">
+          <Button href="#projects" variant="primary">Ver proyectos</Button>
+          <Button href="#contact" variant="ghost">Hablemos</Button>
+        </div>
+      </section>
+
+      <section id="about" class="reveal">
+        <div class="eyebrow">// sobre mí</div>
+        <h2>De la idea al sistema en producción</h2>
+        <p class="section-text">
+          Llevo más de cuatro años construyendo el motor que no se ve: backends
+          escalables y mantenibles en TypeScript y NestJS, con foco en <strong
+            >Domain-Driven Design</strong
+          >, CQRS y arquitecturas orientadas a eventos. Me interesa menos <em
+            >que funcione</em
+          > y más que siga funcionando bien dentro de dos años.
+        </p>
+        <p class="section-text" style="margin-top: 16px;">
+          Cuando una idea me parece útil, no me quedo solo en pensarla: la
+          construyo. Mi propio homelab es el mejor ejemplo fuera del trabajo,
+          con Proxmox, Kubernetes, Terraform, Ansible y Argo CD desplegando y
+          monitorizando mis propios proyectos, punta a punta.
+        </p>
+      </section>
+
+      <section id="stack" class="reveal">
+        <div class="eyebrow">// herramientas</div>
+        <h2>Con lo que trabajo</h2>
+        <StackMarquee />
+      </section>
+
+      <section id="projects" class="reveal">
+        <div class="eyebrow">// trabajo</div>
+        <h2>Una selección de sistemas, de la idea al despliegue</h2>
+        <div class="projects-grid">
+          {projects.map((project) => <ProjectCard project={project} />)}
+        </div>
+      </section>
+
+      <section id="timeline" class="reveal">
+        <div class="eyebrow">// trayectoria</div>
+        <h2>El camino hasta aquí</h2>
+        <div class="timeline-list">
+          {
+            timeline.map((entry) => (
+              <div class="timeline-entry reveal">
+                <div class="period">{entry.period}</div>
+                <div>
+                  <div class="role">{entry.role}</div>
+                  <div class="place">{entry.place}</div>
+                  <div class="description">{entry.description}</div>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </section>
+
+      <section id="contact" class="contact-section reveal">
+        <h2>¿Construimos el <em>próximo sistema</em> juntos?</h2>
+        <p class="lead">
+          Siempre abierto a hablar de proyectos, ideas o simplemente sobre
+          sistemas bien diseñados.
+        </p>
+        <div class="contact-links">
+          <a href="mailto:javierplazasisques@gmail.com"
+            >javierplazasisques@gmail.com</a
+          >
+          <a href="https://github.com/JSisques" target="_blank" rel="noopener"
+            >github</a
+          >
+          <a
+            href="https://www.linkedin.com/in/jsisques/"
+            target="_blank"
+            rel="noopener">linkedin</a
+          >
+          <a href="https://blog.jsisques.net" target="_blank" rel="noopener"
+            >blog</a
+          >
+        </div>
+      </section>
+    </main>
+
+    <Footer />
+
+    <script>
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          }
+        },
+        { threshold: 0.15, rootMargin: '0px 0px -10% 0px' },
+      );
+
+      document
+        .querySelectorAll('.reveal')
+        .forEach((el) => observer.observe(el));
+    </script>
   </body>
 </html>
+
+<style>
+  main {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 72px 24px 0;
+  }
+
+  section {
+    margin-top: 88px;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: var(--ls-caps);
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  h2 {
+    font-family: var(--font-mono);
+    font-size: var(--text-h2);
+    color: var(--text-primary);
+    margin: 12px 0 28px;
+  }
+
+  .hero-section {
+    margin-top: 0;
+    background-image: radial-gradient(var(--gray-800) 1px, transparent 1px);
+    background-size: 18px 18px;
+    padding: 56px 32px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .hero-section h1 {
+    font-family: var(--font-mono);
+    font-size: var(--text-display);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 16px 0 20px;
+    line-height: var(--lh-tight);
+  }
+
+  .lead {
+    color: var(--text-secondary);
+    font-size: var(--text-body-lg);
+    max-width: 620px;
+    line-height: var(--lh-body);
+    margin: 0;
+  }
+
+  .actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  .section-text {
+    color: var(--text-secondary);
+    font-size: var(--text-body-lg);
+    line-height: var(--lh-body);
+    max-width: var(--container-narrow);
+    margin: 0;
+  }
+
+  .section-text strong {
+    color: var(--text-primary);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .timeline-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .timeline-entry {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 24px;
+    padding: 24px 0;
+    border-left: 2px solid var(--border-default);
+    padding-left: 24px;
+    margin-left: 4px;
+  }
+
+  .timeline-entry .period {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+  }
+
+  .timeline-entry .role {
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .timeline-entry .place {
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    margin-top: 2px;
+  }
+
+  .timeline-entry .description {
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    line-height: var(--lh-body);
+    margin-top: 8px;
+  }
+
+  @media (max-width: 560px) {
+    .timeline-entry {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+  }
+
+  .contact-section {
+    padding: 56px 32px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-subtle);
+    text-align: center;
+  }
+
+  .contact-section h2 {
+    margin: 0 0 12px;
+  }
+
+  .contact-section h2 em {
+    color: var(--accent);
+    font-style: normal;
+  }
+
+  .contact-section .lead {
+    margin: 0 auto 28px;
+  }
+
+  .contact-links {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+  }
+</style>
