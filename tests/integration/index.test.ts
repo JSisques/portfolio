@@ -11,6 +11,6 @@ describe("index page", () => {
     const container = await AstroContainer.create();
     // ADR-0003: the default locale is Spanish
     const html = await container.renderToString(Page);
-    expect(html).toContain('lang="es"');
+    expect(html).toMatch(/<html\b[^>]*\blang="es"/);
   });
 });
