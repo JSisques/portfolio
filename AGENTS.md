@@ -57,6 +57,14 @@ Git hooks (ADR-0019) run through Husky, installed by `pnpm install`: `pre-commit
 
 Before considering a change done, run the commands that exist in the table above and make sure they pass. `pnpm build`, `pnpm check`, `pnpm lint`, and `pnpm format:check` must always succeed.
 
+## CI
+
+GitHub Actions runs the following checks on every PR to `main` (ADR-0022): PR title (Conventional Commits via commitlint), Prettier formatting, ESLint, `astro check` (type-check), full Vitest suite, Playwright end-to-end, and `astro build`. All are required for merge.
+
+## Release process
+
+Releases are automated with release-please (ADR-0011): the first release proposes `0.1.0` with a `v` tag (e.g. `v0.1.0`). The release PR opens once the first `feat:`, `fix:`, `perf:`, or `revert:` commit lands on `main`. release-please maintains `CHANGELOG.md` and the version in `package.json`.
+
 ## Git and delivery
 
 - `main` is protected. Work on a feature branch and open a pull request. Pull requests are squash-merged (ADR-0020).

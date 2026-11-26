@@ -38,6 +38,12 @@ pnpm dev
 
 `pnpm install` also installs the Git hooks (Husky): staged files are formatted and linted on commit, commit messages must follow [Conventional Commits](https://www.conventionalcommits.org/), and `pnpm test:changed` runs before each push.
 
+## CI
+
+All PRs to `main` are validated by a GitHub Actions pipeline: PR title (Conventional Commits), format and lint, type-check (`astro check`), full Vitest test suite, Playwright end-to-end, and build. All checks are required to merge.
+
+Releases are automated with [release-please](https://github.com/googleapis/release-please) (ADR-0011): the first release proposes `0.1.0` with a `v` tag (e.g. `v0.1.0`). The release PR opens once the first `feat:`, `fix:`, `perf:`, or `revert:` commit lands on `main`. release-please maintains `CHANGELOG.md` and the version in `package.json`.
+
 ## Documentation
 
 - [Vision](docs/vision.md): purpose, audience, and scope.
