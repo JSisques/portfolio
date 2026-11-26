@@ -44,7 +44,7 @@ All PRs to `main` are validated by a GitHub Actions pipeline: PR title (Conventi
 
 ### Preview deployments
 
-Every pull request to `main` receives a **Cloudflare Worker Preview** (open beta, Wrangler 4.135.0+) named `pr-<number>` (ADR-0021, ADR-0035). Previews never inherit production settings. A sticky comment on the PR shows the preview URL and commit SHA. Fork PRs are skipped because their secrets are unavailable. Previews are deleted automatically when the PR closes. Free plan limits: 100 previews per worker, 100 deployments per preview.
+Every pull request to `main` receives a **Cloudflare Worker Preview** (open beta, Wrangler 4.135.0+) named `pr-<number>` on a separate Worker, `jsisques-net-preview` (ADR-0021, ADR-0035). Previews never inherit production settings. A sticky comment by `github-actions[bot]` on the PR shows the preview URL and commit SHA. Fork PRs are skipped because their secrets are unavailable. Previews are deleted automatically when the PR closes. Free plan limits: 100 previews per worker, 100 deployments per preview.
 
 ### Production deploys
 
@@ -52,16 +52,20 @@ Production deploys on releases and on a daily schedule (ADR-0012, ADR-0005):
 
 - **On push of a `v*` tag** - builds and deploys that exact tag.
 - **On daily schedule (06:00 UTC)** - resolves the latest release tag via `gh release view` and deploys only that tag. If no release exists, the workflow exits cleanly.
-- **On manual dispatch** - same behavior as the schedule: deploys the latest release tag.
+- **On manual dispatch** - an optional `tag` input redeploys a specific published release (rollback path; validated against `^v[0-9]+\.[0-9]+\.[0-9]+$` and must exist as a published release). Empty deploys the latest release.
 
-Both workflows run the pinned `wrangler` dev dependency (no Cloudflare deploy action) and pin every action to a commit SHA (ADR-0035). If the Worker does not exist yet, the first `wrangler preview` creates it without deploying production.
+Both workflows run the pinned `wrangler` dev dependency (no Cloudflare deploy action) and pin every action to a commit SHA (ADR-0035). A smoke check (`curl --fail --retry 5`) runs after every production deploy.
 
-### Required secrets
+### Cloudflare setup
 
-| Secret                  | Required for               | Permissions                                                                                                                                                                                                                                                                              |
-| ----------------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `CLOUDFLARE_ACCOUNT_ID` | Wrangler deployment target | -                                                                                                                                                                                                                                                                                        |
-| `CLOUDFLARE_API_TOKEN`  | Authenticated deploys      | `Workers Scripts` edit and permission to edit the resources used by the Preview. Create the token from the "Edit Cloudflare Workers" template, scoped to the single account and the `jsisques.net` zone (https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/). |
+Two GitHub environments gate the workflows, each holding its own `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`:
+
+- **`production`** - branch rule `main`, tag rule `v*`. Holds the production token (Workers `Editor` on Worker `jsisques-net`, plus Zone > Workers Routes > Write on zone `jsisques.net` for the custom domain).
+- **`preview`** - holds the preview token (Workers `Editor` on Worker `jsisques-net-preview` only, no zone permissions).
+
+The owner creates both Workers in the Cloudflare dashboard first (per-Worker scopes only apply to existing Workers; creating a Worker needs product-level Admin). The tag ruleset `protect-release-tags` restricts creation, update, and deletion of `refs/tags/v*` to admins only.
+
+For rollback, the dispatch input accepts a published release tag. The alternative emergency rollback is `wrangler rollback` (needs Editor on the Worker).
 
 ### Releases
 

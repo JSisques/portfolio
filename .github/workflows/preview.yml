@@ -16,12 +16,18 @@ concurrency:
   group: preview-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
+# Previews live on a separate Worker. The `preview` environment holds a token
+# scoped to that Worker only, so pull request code cannot deploy production.
+env:
+  PREVIEW_WORKER: jsisques-net-preview
+
 jobs:
   preview:
     runs-on: ubuntu-latest
     name: Deploy preview
     # Secrets are unavailable to forked pull requests.
     if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    environment: preview
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -42,7 +48,7 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
-          output=$(pnpm exec wrangler preview --name "pr-$PR_NUMBER" --tag "${HEAD_SHA:0:7}" --json)
+          output=$(pnpm exec wrangler preview --worker-name "$PREVIEW_WORKER" --name "pr-$PR_NUMBER" --tag "${HEAD_SHA:0:7}" --json)
           printf '%s\n' "$output"
           url=$(printf '%s' "$output" | jq -er '.preview.urls[0]')
           echo "url=$url" >> "$GITHUB_OUTPUT"
@@ -56,7 +62,7 @@ jobs:
           set -euo pipefail
           body=$(printf '<!-- cloudflare-preview -->\nPreview: %s\n\nCommit: %s\n' "$PREVIEW_URL" "$HEAD_SHA")
           comment_id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" --paginate \
-            --jq '.[] | select(.body | startswith("<!-- cloudflare-preview -->")) | .id' | head -n1)
+            --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | startswith("<!-- cloudflare-preview -->"))) | .id' | head -n1)
           if [ -n "$comment_id" ]; then
             gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$comment_id" --raw-field body="$body"
           else
@@ -67,6 +73,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Delete preview
     if: github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    environment: preview
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -84,7 +91,7 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           set -uo pipefail
-          if ! output=$(pnpm exec wrangler preview delete --name "pr-$PR_NUMBER" --skip-confirmation 2>&1); then
+          if ! output=$(pnpm exec wrangler preview delete --worker-name "$PREVIEW_WORKER" --name "pr-$PR_NUMBER" --skip-confirmation 2>&1); then
             printf '%s\n' "$output"
             if printf '%s' "$output" | grep -qi "not found"; then
               echo "::notice::Preview pr-$PR_NUMBER does not exist; nothing to delete."
