@@ -65,7 +65,7 @@ Two GitHub environments gate the workflows, each holding its own `CLOUDFLARE_API
 
 The owner creates both Workers in the Cloudflare dashboard first (per-Worker scopes only apply to existing Workers; creating a Worker needs product-level Admin). The tag ruleset `protect-release-tags` restricts creation, update, and deletion of `refs/tags/v*` to admins only.
 
-For rollback, the dispatch input accepts a published release tag. The alternative emergency rollback is `wrangler rollback` (needs Editor on the Worker).
+For rollback, the dispatch input accepts a published release tag. The alternative emergency rollback is `wrangler rollback` (needs Editor on the Worker). Either way, also mark the bad release as a pre-release (`gh release edit <tag> --prerelease`): the daily rebuild deploys the latest release, which excludes pre-releases, so otherwise it redeploys the bad release the next morning.
 
 ### Releases
 
