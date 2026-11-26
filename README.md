@@ -60,7 +60,7 @@ Both workflows run the pinned `wrangler` dev dependency (no Cloudflare deploy ac
 
 Two GitHub environments gate the workflows, each holding its own `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`:
 
-- **`production`** - branch rule `main`, tag rule `v*`. Holds the production token (Workers `Editor` on Worker `jsisques-net`, plus Zone > Workers Routes > Write on zone `jsisques.net` for the custom domain).
+- **`production`** - branch rule `main`, tag rule `v*`. Holds the production token (Workers `Editor` on Worker `jsisques-net` only). The custom domain `jsisques.net` is attached once in the dashboard (Worker > Settings > Domains & Routes > Add > Custom Domain); `wrangler.jsonc` has no `routes`, so deploys never change it and the token needs no zone permissions.
 - **`preview`** - holds the preview token (Workers `Editor` on Worker `jsisques-net-preview` only, no zone permissions).
 
 The owner creates both Workers in the Cloudflare dashboard first (per-Worker scopes only apply to existing Workers; creating a Worker needs product-level Admin). The tag ruleset `protect-release-tags` restricts creation, update, and deletion of `refs/tags/v*` to admins only.

@@ -6,12 +6,9 @@
   "assets": {
     "directory": "./dist",
   },
-  "routes": [
-    {
-      "pattern": "jsisques.net",
-      "custom_domain": true,
-    },
-  ],
+  // The custom domain jsisques.net is attached once in the Cloudflare dashboard,
+  // not here: with no `routes`, `wrangler deploy` never touches it, so the
+  // production token needs no zone permissions (ADR-0035).
   "workers_dev": true,
   "preview_urls": true,
   // Pull request Previews (ADR-0021). They never inherit production settings.

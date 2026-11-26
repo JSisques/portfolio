@@ -17,7 +17,7 @@ Host the site on **Cloudflare Workers with static assets**, configured via `wran
 
 - The `assets` field specifies the `./dist` output directory. No binding is needed for static-only assets.
 - `workers_dev` and `preview_urls` are enabled, so production and Previews are reachable on `*.workers.dev`.
-- A custom domain route is configured: `jsisques.net` with `custom_domain: true`.
+- The custom domain `jsisques.net` is attached once in the Cloudflare dashboard, not in `wrangler.jsonc`. With no `routes`, `wrangler deploy` never publishes routes or custom domains (wrangler 4.168.0 `cli.js:60742-60754`), so the production token needs no zone permissions. Changing a custom domain requires `Editor` plus Zone Workers Routes Write (https://developers.cloudflare.com/workers/authorization/workers/).
 - Production deploys use `wrangler deploy --tag <tag>` against the latest release tag (ADR-0012, ADR-0005).
 - Preview deployments use **Cloudflare Worker Previews** named `pr-<number>` via `wrangler preview --worker-name jsisques-net-preview --name pr-<number>`, deleted when the PR closes. Previews run as open beta on Wrangler 4.135.0+ (https://developers.cloudflare.com/workers/previews/).
 - The `previews` block in `wrangler.jsonc` is empty for now; T11 will add `previews.vars` for the log-only mail adapter (https://developers.cloudflare.com/workers/previews/configuration/).
@@ -33,7 +33,7 @@ Host the site on **Cloudflare Workers with static assets**, configured via `wran
 - A smoke check (`curl --fail --retry 5`) runs after every production deploy and marks the run red on failure.
 - `pnpm-lock.yaml` includes wrangler, workerd, and esbuild. `pnpm-workspace.yaml` uses `allowBuilds` for esbuild and workerd as a supply-chain tradeoff limited to those two packages (without it, `pnpm install` fails with `ERR_PNPM_IGNORED_BUILDS`).
 - Two Cloudflare account-owned API tokens are created after the owner creates both Workers in the dashboard (per-Worker scopes only apply to existing Workers; creating a Worker needs product-level Admin):
-  - **Production token**: Workers `Editor` on `jsisques-net`, plus Zone > Workers Routes > Write on zone `jsisques.net` (custom domain).
+  - **Production token**: Workers `Editor` on `jsisques-net` only.
   - **Preview token**: Workers `Editor` on `jsisques-net-preview` only. No zone permissions.
-  - Unverified until first real run: that a per-Worker Editor token is enough for `wrangler preview`, and that `wrangler deploy` with an already-configured custom domain needs no more than the production token above.
+  - Unverified until first real run: that a per-Worker Editor token is enough for `wrangler preview`, and for `wrangler deploy`.
 - GitHub disables scheduled workflows after 60 days without repository activity.
