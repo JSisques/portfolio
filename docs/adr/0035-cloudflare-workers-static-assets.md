@@ -16,7 +16,7 @@ Version URLs (`wrangler versions upload`) run against production resources, whic
 Host the site on **Cloudflare Workers with static assets**, configured via `wrangler.jsonc`:
 
 - The `assets` field specifies the `./dist` output directory. No binding is needed for static-only assets.
-- `workers_dev` and `preview_urls` are enabled, so production and Previews are reachable on `*.workers.dev`.
+- `workers_dev` and `preview_urls` are disabled for the production Worker, so production is served only on `jsisques.net`. Previews are reachable on `*.workers.dev` through the `jsisques-net-preview` Worker, whose hosts are enabled in the dashboard.
 - The custom domain `jsisques.net` is attached once in the Cloudflare dashboard, not in `wrangler.jsonc`. With no `routes`, `wrangler deploy` never publishes routes or custom domains (wrangler 4.168.0 `cli.js:60742-60754`), so the production token needs no zone permissions. Changing a custom domain requires `Editor` plus Zone Workers Routes Write (https://developers.cloudflare.com/workers/authorization/workers/).
 - Production deploys use `wrangler deploy --tag <tag>` against the latest release tag (ADR-0012, ADR-0005).
 - Preview deployments use **Cloudflare Worker Previews** named `pr-<number>` via `wrangler preview --worker-name jsisques-net-preview --name pr-<number>`, deleted when the PR closes. Previews run as open beta on Wrangler 4.135.0+ (https://developers.cloudflare.com/workers/previews/).
