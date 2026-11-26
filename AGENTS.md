@@ -61,6 +61,10 @@ Before considering a change done, run the commands that exist in the table above
 
 GitHub Actions runs the following checks on every PR to `main` (ADR-0022): PR title (Conventional Commits via commitlint), Prettier formatting, ESLint, `astro check` (type-check), full Vitest suite, Playwright end-to-end, and `astro build`. All are required for merge.
 
+Preview deployments run on every PR to `main` (ADR-0021, ADR-0035): the site is built and deployed via Cloudflare Worker Previews (Wrangler 4.135.0+) named `pr-<number>`, deleted when the PR closes. A sticky comment on the PR shows the preview URL and commit SHA. Fork PRs are skipped.
+
+Production deploys run on `v*` tag pushes, daily schedule (06:00 UTC), or manual dispatch (ADR-0012, ADR-0005). A resolve job determines the tag; only the resolved release tag is deployed, never `main` HEAD.
+
 ## Release process
 
 Releases are automated with release-please (ADR-0011): the first release proposes `0.1.0` with a `v` tag (e.g. `v0.1.0`). The release PR opens once the first `feat:`, `fix:`, `perf:`, or `revert:` commit lands on `main`. release-please maintains `CHANGELOG.md` and the version in `package.json`.

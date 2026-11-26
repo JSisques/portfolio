@@ -42,6 +42,29 @@ pnpm dev
 
 All PRs to `main` are validated by a GitHub Actions pipeline: PR title (Conventional Commits), format and lint, type-check (`astro check`), full Vitest test suite, Playwright end-to-end, and build. All checks are required to merge.
 
+### Preview deployments
+
+Every pull request to `main` receives a **Cloudflare Worker Preview** (open beta, Wrangler 4.135.0+) named `pr-<number>` (ADR-0021, ADR-0035). Previews never inherit production settings. A sticky comment on the PR shows the preview URL and commit SHA. Fork PRs are skipped because their secrets are unavailable. Previews are deleted automatically when the PR closes. Free plan limits: 100 previews per worker, 100 deployments per preview.
+
+### Production deploys
+
+Production deploys on releases and on a daily schedule (ADR-0012, ADR-0005):
+
+- **On push of a `v*` tag** - builds and deploys that exact tag.
+- **On daily schedule (06:00 UTC)** - resolves the latest release tag via `gh release view` and deploys only that tag. If no release exists, the workflow exits cleanly.
+- **On manual dispatch** - same behavior as the schedule: deploys the latest release tag.
+
+Both workflows use `wrangler` directly (no third-party actions) and pin exact action SHAs (ADR-0035). The first preview may fail if the Worker does not yet exist; the Worker is created by the first production deploy (first release) or a one-time `wrangler deploy` by the owner.
+
+### Required secrets
+
+| Secret                  | Required for               | Permissions                                                                                                                                                                                                                                                                              |
+| ----------------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CLOUDFLARE_ACCOUNT_ID` | Wrangler deployment target | -                                                                                                                                                                                                                                                                                        |
+| `CLOUDFLARE_API_TOKEN`  | Authenticated deploys      | `Workers Scripts` edit and permission to edit the resources used by the Preview. Create the token from the "Edit Cloudflare Workers" template, scoped to the single account and the `jsisques.net` zone (https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/). |
+
+### Releases
+
 Releases are automated with [release-please](https://github.com/googleapis/release-please) (ADR-0011): the first release proposes `0.1.0` with a `v` tag (e.g. `v0.1.0`). The release PR opens once the first `feat:`, `fix:`, `perf:`, or `revert:` commit lands on `main`. release-please maintains `CHANGELOG.md` and the version in `package.json`.
 
 ## Documentation
