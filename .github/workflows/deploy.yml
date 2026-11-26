@@ -35,15 +35,16 @@ jobs:
             echo "tag=$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          if ! out=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName 2>&1); then
-            if printf '%s' "$out" | grep -qi "release not found"; then
+          err=$(mktemp)
+          if ! tag=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName 2>"$err"); then
+            if grep -qi "release not found" "$err"; then
               echo "::notice::No published release yet; nothing to deploy."
               exit 0
             fi
-            printf '%s\n' "$out"
+            cat "$err" >&2
             exit 1
           fi
-          echo "tag=$out" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
   deploy:
     runs-on: ubuntu-latest

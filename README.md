@@ -54,7 +54,7 @@ Production deploys on releases and on a daily schedule (ADR-0012, ADR-0005):
 - **On daily schedule (06:00 UTC)** - resolves the latest release tag via `gh release view` and deploys only that tag. If no release exists, the workflow exits cleanly.
 - **On manual dispatch** - same behavior as the schedule: deploys the latest release tag.
 
-Both workflows use `wrangler` directly (no third-party actions) and pin exact action SHAs (ADR-0035). The first preview may fail if the Worker does not yet exist; the Worker is created by the first production deploy (first release) or a one-time `wrangler deploy` by the owner.
+Both workflows run the pinned `wrangler` dev dependency (no Cloudflare deploy action) and pin every action to a commit SHA (ADR-0035). If the Worker does not exist yet, the first `wrangler preview` creates it without deploying production.
 
 ### Required secrets
 

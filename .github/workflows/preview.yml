@@ -58,9 +58,9 @@ jobs:
           comment_id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" --paginate \
             --jq '.[] | select(.body | startswith("<!-- cloudflare-preview -->")) | .id' | head -n1)
           if [ -n "$comment_id" ]; then
-            gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$comment_id" --field body="$body"
+            gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$comment_id" --raw-field body="$body"
           else
-            gh api --method POST "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" --field body="$body"
+            gh api --method POST "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" --raw-field body="$body"
           fi
 
   cleanup:
@@ -82,4 +82,14 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: pnpm exec wrangler preview delete --name "pr-$PR_NUMBER" --skip-confirmation
+        run: |
+          set -uo pipefail
+          if ! output=$(pnpm exec wrangler preview delete --name "pr-$PR_NUMBER" --skip-confirmation 2>&1); then
+            printf '%s\n' "$output"
+            if printf '%s' "$output" | grep -qi "not found"; then
+              echo "::notice::Preview pr-$PR_NUMBER does not exist; nothing to delete."
+              exit 0
+            fi
+            exit 1
+          fi
+          printf '%s\n' "$output"
