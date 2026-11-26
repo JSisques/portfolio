@@ -1,0 +1,99 @@
+name: Deploy
+
+# Production deploys only released code (ADR-0012): the pushed `v*` tag, the
+# latest published release on the daily rebuild (ADR-0005), or a chosen earlier
+# release on manual dispatch (rollback). Never `main` HEAD.
+on:
+  push:
+    tags:
+      - "v*"
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to deploy (for example v0.1.0). Empty deploys the latest release.
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    name: Resolve release tag
+    outputs:
+      tag: ${{ steps.resolve.outputs.tag }}
+    steps:
+      - name: Resolve tag
+        id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT" = "push" ]; then
+            echo "tag=$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          err=$(mktemp)
+          if [ -n "${INPUT_TAG:-}" ]; then
+            # Rollback: only an existing published release can be deployed.
+            if ! printf '%s' "$INPUT_TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+              echo "::error::Tag must look like v1.2.3."
+              exit 1
+            fi
+            if ! tag=$(gh release view "$INPUT_TAG" --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName 2>"$err"); then
+              cat "$err" >&2
+              echo "::error::$INPUT_TAG is not a published release."
+              exit 1
+            fi
+          elif ! tag=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName 2>"$err"); then
+            if grep -qi "release not found" "$err"; then
+              echo "::notice::No published release yet; nothing to deploy."
+              exit 0
+            fi
+            cat "$err" >&2
+            exit 1
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy production
+    needs: resolve
+    if: needs.resolve.outputs.tag != ''
+    # Secrets live in the protected `production` environment, which only accepts
+    # runs from `main` (schedule, dispatch) and `v*` tags.
+    environment:
+      name: production
+      url: https://jsisques.net
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: refs/tags/${{ needs.resolve.outputs.tag }}
+          persist-credentials: false
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Deploy to Cloudflare
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          TAG: ${{ needs.resolve.outputs.tag }}
+        run: pnpm exec wrangler deploy --tag "$TAG" --message "Release $TAG"
+      - name: Smoke check
+        run: |
+          curl --fail --silent --show-error --location --output /dev/null \
+            --retry 5 --retry-delay 10 --retry-all-errors \
+            https://jsisques.net/

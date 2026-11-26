@@ -1,0 +1,18 @@
+// Cloudflare Workers with static assets (ADR-0035).
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "jsisques-net",
+  "compatibility_date": "2026-11-26",
+  "assets": {
+    "directory": "./dist",
+  },
+  // The custom domain jsisques.net is attached once in the Cloudflare dashboard,
+  // not here: with no `routes`, `wrangler deploy` never touches it, so the
+  // production token needs no zone permissions (ADR-0035).
+  // Production is served only on jsisques.net. Previews run on the separate
+  // jsisques-net-preview Worker, whose hosts are set in the dashboard.
+  "workers_dev": false,
+  "preview_urls": false,
+  // Pull request Previews (ADR-0021). They never inherit production settings.
+  "previews": {},
+}

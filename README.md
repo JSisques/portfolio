@@ -42,6 +42,33 @@ pnpm dev
 
 All PRs to `main` are validated by a GitHub Actions pipeline: PR title (Conventional Commits), format and lint, type-check (`astro check`), full Vitest test suite, Playwright end-to-end, and build. All checks are required to merge.
 
+### Preview deployments
+
+Every pull request to `main` receives a **Cloudflare Worker Preview** (open beta, Wrangler 4.135.0+) named `pr-<number>` on a separate Worker, `jsisques-net-preview` (ADR-0021, ADR-0035). Previews never inherit production settings. A sticky comment by `github-actions[bot]` on the PR shows the preview URL and commit SHA. Fork PRs are skipped because their secrets are unavailable. Previews are deleted automatically when the PR closes. Free plan limits: 100 previews per worker, 100 deployments per preview.
+
+### Production deploys
+
+Production deploys on releases and on a daily schedule (ADR-0012, ADR-0005):
+
+- **On push of a `v*` tag** - builds and deploys that exact tag.
+- **On daily schedule (06:00 UTC)** - resolves the latest release tag via `gh release view` and deploys only that tag. If no release exists, the workflow exits cleanly.
+- **On manual dispatch** - an optional `tag` input redeploys a specific published release (rollback path; validated against `^v[0-9]+\.[0-9]+\.[0-9]+$` and must exist as a published release). Empty deploys the latest release.
+
+Both workflows run the pinned `wrangler` dev dependency (no Cloudflare deploy action) and pin every action to a commit SHA (ADR-0035). A smoke check (`curl --fail --retry 5`) runs after every production deploy.
+
+### Cloudflare setup
+
+Two GitHub environments gate the workflows, each holding its own `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`:
+
+- **`production`** - branch rule `main`, tag rule `v*`. Holds the production token (Workers `Editor` on Worker `jsisques-net` only). The custom domain `jsisques.net` is attached once in the dashboard (Worker > Settings > Domains & Routes > Add > Custom Domain); `wrangler.jsonc` has no `routes`, so deploys never change it and the token needs no zone permissions.
+- **`preview`** - holds the preview token (Workers `Editor` on Worker `jsisques-net-preview` only, no zone permissions).
+
+On the `jsisques-net-preview` Worker, enable both `workers.dev` and Preview URLs (Worker > Domains); without a host, a Preview has no URL and the preview job fails. The owner creates both Workers in the Cloudflare dashboard first (per-Worker scopes only apply to existing Workers; creating a Worker needs product-level Admin). The tag ruleset `protect-release-tags` restricts creation, update, and deletion of `refs/tags/v*` to admins only.
+
+For rollback, the dispatch input accepts a published release tag. The alternative emergency rollback is `wrangler rollback` (needs Editor on the Worker). Either way, also mark the bad release as a pre-release (`gh release edit <tag> --prerelease`): the daily rebuild deploys the latest release, which excludes pre-releases, so otherwise it redeploys the bad release the next morning.
+
+### Releases
+
 Releases are automated with [release-please](https://github.com/googleapis/release-please) (ADR-0011): the first release proposes `0.1.0` with a `v` tag (e.g. `v0.1.0`). The release PR opens once the first `feat:`, `fix:`, `perf:`, or `revert:` commit lands on `main`. release-please maintains `CHANGELOG.md` and the version in `package.json`.
 
 ## Documentation
