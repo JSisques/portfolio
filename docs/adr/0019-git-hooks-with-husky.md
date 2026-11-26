@@ -11,11 +11,11 @@ Formatting, linting, tests, and Conventional Commits (ADR-0010, ADR-0015, ADR-00
 
 Use **Husky** to run local Git hooks:
 
-| Hook | Runs |
-| --- | --- |
-| `pre-commit` | Prettier and ESLint on staged files only, through lint-staged. |
-| `commit-msg` | commitlint with the Conventional Commits configuration. |
-| `pre-push` | `pnpm test:changed`: Vitest tests affected by the commits being pushed. |
+| Hook         | Runs                                                                    |
+| ------------ | ----------------------------------------------------------------------- |
+| `pre-commit` | Prettier and ESLint on staged files only, through lint-staged.          |
+| `commit-msg` | commitlint with the Conventional Commits configuration.                 |
+| `pre-push`   | `pnpm test:changed`: Vitest tests affected by the commits being pushed. |
 
 `test:changed` compares against `origin/main` (for example, `vitest run --changed origin/main`). Vitest's `--changed` without a reference only considers uncommitted changes. In `pre-push` everything is already committed, so it would run no tests and always pass.
 

@@ -34,18 +34,24 @@ Single source of project rules for every AI agent working in this repository (AD
 
 ## Commands
 
-| Command        | Purpose                                    |
-| -------------- | ------------------------------------------ |
-| `pnpm install` | Install dependencies.                      |
-| `pnpm dev`     | Start the local development server.        |
-| `pnpm build`   | Build the production site.                 |
-| `pnpm check`   | Type-check with `astro check` (strict).    |
+| Command             | Purpose                                                            |
+| ------------------- | ------------------------------------------------------------------ |
+| `pnpm install`      | Install dependencies.                                              |
+| `pnpm dev`          | Start the local development server.                                |
+| `pnpm build`        | Build the production site.                                         |
+| `pnpm check`        | Type-check with `astro check` (strict).                            |
+| `pnpm lint`         | Lint with ESLint.                                                  |
+| `pnpm format`       | Format every file with Prettier.                                   |
+| `pnpm format:check` | Check formatting without writing.                                  |
+| `pnpm test:changed` | Run the Vitest tests affected by commits not yet on `origin/main`. |
 
-Linting, formatting, and test commands are added with their tooling. Add them to this table when they exist.
+Test commands are added with their tooling. Add them to this table when they exist.
+
+Git hooks (ADR-0019) run through Husky, installed by `pnpm install`: `pre-commit` formats and lints staged files, `commit-msg` rejects messages that are not Conventional Commits, and `pre-push` runs `pnpm test:changed`. Do not bypass them with `--no-verify`.
 
 ## Quality gates
 
-Before considering a change done, run the commands that exist in the table above and make sure they pass. `pnpm build` and `pnpm check` must always succeed.
+Before considering a change done, run the commands that exist in the table above and make sure they pass. `pnpm build`, `pnpm check`, `pnpm lint`, and `pnpm format:check` must always succeed.
 
 ## Git and delivery
 
