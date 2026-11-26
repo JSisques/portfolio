@@ -22,22 +22,22 @@ GitHub tracking: milestone `v0.1.0`, one issue per task.
 
 ## Tasks
 
-| ID  | Issue | Specs        | Title                                                    | Route     | Status                                        | Commit |
-| --- | ----- | ------------ | -------------------------------------------------------- | --------- | --------------------------------------------- | ------ |
-| T1  | #1    | S1, S2, S10  | `chore: scaffold Astro project`                          | inline    | done (branch `chore/scaffold-astro-project`)  | see L5 |
-| T2  | #2    | S3, S7       | `chore: add linting, formatting and git hooks`           | inline    | done (branch `chore/lint-format-hooks`)       | see L6 |
-| T3  | #3    | S6           | `test: set up Vitest and Playwright`                     | delegated | in progress (branch `test/vitest-playwright`) |        |
-| T4  | #4    | S3, S4, S9   | `ci: add CI pipeline and release-please`                 | inline    | pending                                       |        |
-| T5  | #5    | S5           | `ci: add Cloudflare deploy, previews and daily rebuild`  | inline    | pending                                       |        |
-| T6  | #6    | S8, S9       | `ci: add CodeQL, Renovate and Lighthouse CI`             | inline    | pending                                       |        |
-| T7  | #7    | S1, S11      | `feat: add i18n routing, base layout and themes`         | inline    | pending                                       |        |
-| T8  | #8    | S8           | `feat: add security headers and content security policy` | inline    | pending                                       |        |
-| T9  | #9    | S1, S11, S13 | `feat: add about and experience sections`                | inline    | pending                                       |        |
-| T10 | #10   | S1, S13      | `feat: add projects with GitHub data`                    | inline    | pending                                       |        |
-| T11 | #11   | S1, S6       | `feat: add contact form with mail adapters`              | inline    | pending                                       |        |
-| T12 | #12   | S12          | `feat: generate CV PDFs from site content`               | inline    | pending                                       |        |
-| T13 | #13   | S5           | `ci: publish container image to GHCR`                    | inline    | pending                                       |        |
-| T14 | #14   | S1           | `feat: add Cloudflare Web Analytics`                     | inline    | pending                                       |        |
+| ID  | Issue | Specs        | Title                                                    | Route     | Status                                       | Commit  |
+| --- | ----- | ------------ | -------------------------------------------------------- | --------- | -------------------------------------------- | ------- |
+| T1  | #1    | S1, S2, S10  | `chore: scaffold Astro project`                          | inline    | done (branch `chore/scaffold-astro-project`) | see L5  |
+| T2  | #2    | S3, S7       | `chore: add linting, formatting and git hooks`           | inline    | done (branch `chore/lint-format-hooks`)      | see L6  |
+| T3  | #3    | S6           | `test: set up Vitest and Playwright`                     | delegated | done (branch `test/vitest-playwright`)       | see L11 |
+| T4  | #4    | S3, S4, S9   | `ci: add CI pipeline and release-please`                 | inline    | pending                                      |         |
+| T5  | #5    | S5           | `ci: add Cloudflare deploy, previews and daily rebuild`  | inline    | pending                                      |         |
+| T6  | #6    | S8, S9       | `ci: add CodeQL, Renovate and Lighthouse CI`             | inline    | pending                                      |         |
+| T7  | #7    | S1, S11      | `feat: add i18n routing, base layout and themes`         | inline    | pending                                      |         |
+| T8  | #8    | S8           | `feat: add security headers and content security policy` | inline    | pending                                      |         |
+| T9  | #9    | S1, S11, S13 | `feat: add about and experience sections`                | inline    | pending                                      |         |
+| T10 | #10   | S1, S13      | `feat: add projects with GitHub data`                    | inline    | pending                                      |         |
+| T11 | #11   | S1, S6       | `feat: add contact form with mail adapters`              | inline    | pending                                      |         |
+| T12 | #12   | S12          | `feat: generate CV PDFs from site content`               | inline    | pending                                      |         |
+| T13 | #13   | S5           | `ci: publish container image to GHCR`                    | inline    | pending                                      |         |
+| T14 | #14   | S1           | `feat: add Cloudflare Web Analytics`                     | inline    | pending                                      |         |
 
 Route evidence: all tasks start inline. No writer trigger applies yet (units are sequential and depend on earlier ones).
 
@@ -53,4 +53,5 @@ Route evidence: all tasks start inline. No writer trigger applies yet (units are
 - **L8** (2026-11-26) Native review of `dbea07e` (lenses risk and reliability, consent granted by the owner): approved and acknowledged, lineage `review-98e7ebf20fda226d`. Two non-blocking findings, deferred: `test:changed` passes vacuously until T3 adds tests; lint, format, and commit-message gates are not enforced in CI until T4.
 - **L9** (2026-11-26) T2 merged as `71692c8` (#16). T3 started. Owner: "En un worktree nuevo desde main y usando el modo orquestación para aprovechar los modelos locales que tenemos vamos a trabajar en esta issue https://github.com/JSisques/portfolio/issues/3 delega todo el trabajo posible sobretodo al worker que tiene modelo local y encargate de revisar sus cambios y que todo esté ok". Route: delegated to `gentle-ai-worker` by owner request; parent reviews. Worktree `portfolio-worktrees/vitest-playwright`.
 - **L10** (2026-11-26) T3 implemented in worktree `portfolio-worktrees/vitest-playwright`. Pinned: @playwright/test 1.65.1, @axe-core/playwright 4.14.1, @types/node 26.6.10 (exact-pinned on Node 26 major). Created: `vitest.config.ts` (`getViteConfig` from `astro/config` + `/// <reference types="vitest/config" />`, `configDefaults.exclude` spread, `tests/e2e/**` added to exclude, no `globals: true` — tests import `vitest` explicitly), `playwright.config.ts` (testDir `tests/e2e`, Chromium, `webServer: pnpm build && pnpm preview --port 4321`, `reuseExistingServer: !process.env.CI`, `baseURL: http://localhost:4321`, `!!process.env.CI` with `@types/node`), `tests/integration/index.test.ts` (renders `index.astro` via `experimental_AstroContainer.create()`, asserts `html[lang="es"]` per ADR-0003 — no `?container` suffix), `tests/e2e/home.spec.ts` (asserts `response?.ok()` + `html[lang="es"]` via `toHaveAttribute`, AxeBuilder wcag2a/2aa/21a/21aa/22aa expecting 0 violations), scripts `"test": "vitest run"`, `"test:e2e": "playwright test"`, `.gitignore` test artifacts, `eslint.config.js` ignores test output dirs. TDD evidence (RED/GREEN): integration test lang "en" → Vitest failed (1 failed, exit 1) → reverted, passed (1 passed, exit 0); e2e lang "en" → Playwright failed (`Expected: "en", Received: "es"`, exit 1), e2e img without alt → axe `image-alt` critical violation → reverted, passed (1 passed, exit 0). Acceptance: `pnpm test`, `pnpm test:e2e`, `pnpm test:changed` all pass; `pnpm lint`, `pnpm check`, `pnpm build` clean; no test calls external services.
+- **L11** (2026-11-26) Parent review of the worker's first pass found and sent back one correction batch: `@ts-expect-error` in `vitest.config.ts`, an undocumented `?container` import with an `any` declaration, `declare const process` instead of `@types/node`, a vacuous `page.url()` assertion, missing e2e RED evidence, mojibake in comments, and missing ESLint ignores for report dirs. The parent then fixed `@types/node` to an exact pin (the worker had left `^26.6.10`). Parent re-ran on Node 26: `pnpm install --frozen-lockfile`, `pnpm test` (1 passed), `pnpm test:changed`, `pnpm lint`, `pnpm format:check`, `pnpm check`, `pnpm build`, `pnpm test:e2e` (1 passed), all exit 0. Committed `cf78039`. Native review (lenses risk and reliability, consent granted by the owner): approved and acknowledged, lineage `review-4d0088a3d125a53a`. Non-blocking follow-ups: the integration test asserts a `lang="es"` substring (tighten when T7 adds the i18n layout); the e2e test could split the axe audit into its own test; consider an explicit `webServer.timeout` for CI builds (T4).
 - Next step: owner opens the pull request for T3, then T4.
