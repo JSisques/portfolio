@@ -63,7 +63,7 @@ Two GitHub environments gate the workflows, each holding its own `CLOUDFLARE_API
 - **`production`** - branch rule `main`, tag rule `v*`. Holds the production token (Workers `Editor` on Worker `jsisques-net` only). The custom domain `jsisques.net` is attached once in the dashboard (Worker > Settings > Domains & Routes > Add > Custom Domain); `wrangler.jsonc` has no `routes`, so deploys never change it and the token needs no zone permissions.
 - **`preview`** - holds the preview token (Workers `Editor` on Worker `jsisques-net-preview` only, no zone permissions).
 
-The owner creates both Workers in the Cloudflare dashboard first (per-Worker scopes only apply to existing Workers; creating a Worker needs product-level Admin). The tag ruleset `protect-release-tags` restricts creation, update, and deletion of `refs/tags/v*` to admins only.
+On the `jsisques-net-preview` Worker, enable both `workers.dev` and Preview URLs (Worker > Domains); without a host, a Preview has no URL and the preview job fails. The owner creates both Workers in the Cloudflare dashboard first (per-Worker scopes only apply to existing Workers; creating a Worker needs product-level Admin). The tag ruleset `protect-release-tags` restricts creation, update, and deletion of `refs/tags/v*` to admins only.
 
 For rollback, the dispatch input accepts a published release tag. The alternative emergency rollback is `wrangler rollback` (needs Editor on the Worker). Either way, also mark the bad release as a pre-release (`gh release edit <tag> --prerelease`): the daily rebuild deploys the latest release, which excludes pre-releases, so otherwise it redeploys the bad release the next morning.
 

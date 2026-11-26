@@ -50,7 +50,12 @@ jobs:
           set -euo pipefail
           output=$(pnpm exec wrangler preview --worker-name "$PREVIEW_WORKER" --name "pr-$PR_NUMBER" --tag "${HEAD_SHA:0:7}" --json)
           printf '%s\n' "$output"
-          url=$(printf '%s' "$output" | jq -er '.preview.urls[0]')
+          # Wrangler prints asset upload progress before the JSON document.
+          json=$(printf '%s\n' "$output" | sed -n '/^{/,$p')
+          if ! url=$(printf '%s' "$json" | jq -er '.preview.urls[0] // empty'); then
+            echo "::error::The Preview has no URL. Enable workers.dev and Preview URLs on the $PREVIEW_WORKER Worker (Domains tab)."
+            exit 1
+          fi
           echo "url=$url" >> "$GITHUB_OUTPUT"
       - name: Comment Preview URL
         env:
