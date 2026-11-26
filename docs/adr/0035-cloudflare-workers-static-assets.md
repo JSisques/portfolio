@@ -34,6 +34,6 @@ Host the site on **Cloudflare Workers with static assets**, configured via `wran
 - `pnpm-lock.yaml` includes wrangler, workerd, and esbuild. `pnpm-workspace.yaml` uses `allowBuilds` for esbuild and workerd as a supply-chain tradeoff limited to those two packages (without it, `pnpm install` fails with `ERR_PNPM_IGNORED_BUILDS`).
 - Two Cloudflare account-owned API tokens are created after the owner creates both Workers in the dashboard (per-Worker scopes only apply to existing Workers; creating a Worker needs product-level Admin):
   - **Production token**: Workers `Editor` on `jsisques-net` only.
-  - **Preview token**: Workers `Editor` on `jsisques-net-preview` only. No zone permissions.
-  - Unverified until first real run: that a per-Worker Editor token is enough for `wrangler preview`, and for `wrangler deploy`.
+  - **Preview token**: Workers `Admin` on `jsisques-net-preview` only. No zone permissions. Observed on PR #19: `Editor` creates Previews but `wrangler preview delete` fails with "No access to the specified resource"; per-Worker `Admin` deletes them and still cannot reach the production Worker.
+  - Unverified until the first release: that a per-Worker `Editor` token is enough for `wrangler deploy`.
 - GitHub disables scheduled workflows after 60 days without repository activity.
