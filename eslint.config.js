@@ -9,7 +9,16 @@ import tseslint from "typescript-eslint";
 // Formatting belongs to Prettier: eslint-config-prettier goes last so no
 // ESLint rule conflicts with it (ADR-0018).
 export default defineConfig(
-  { ignores: ["dist/", ".astro/", "node_modules/"] },
+  {
+    ignores: [
+      "dist/",
+      ".astro/",
+      "node_modules/",
+      "test-results/",
+      "playwright-report/",
+      "blob-report/",
+    ],
+  },
   js.configs.recommended,
   tseslint.configs.recommended,
   astro.configs.recommended,

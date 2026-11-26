@@ -43,7 +43,11 @@ Single source of project rules for every AI agent working in this repository (AD
 | `pnpm lint`         | Lint with ESLint.                                                  |
 | `pnpm format`       | Format every file with Prettier.                                   |
 | `pnpm format:check` | Check formatting without writing.                                  |
+| `pnpm test`         | Run unit and integration tests with Vitest.                        |
 | `pnpm test:changed` | Run the Vitest tests affected by commits not yet on `origin/main`. |
+| `pnpm test:e2e`     | Run Playwright end-to-end tests against the built site.            |
+
+`pnpm exec playwright install chromium` installs the Chromium browser binary once (required before running `pnpm test:e2e`).
 
 Test commands are added with their tooling. Add them to this table when they exist.
 
