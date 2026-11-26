@@ -8,11 +8,11 @@ Visual direction for jsisques.net. Defined by the site owner through a Socratic 
 >
 > Dial: ENERGY 2 / RHYTHM 2 / MOTION 1
 
-| Dial | Value | Reason |
-| --- | --- | --- |
-| ENERGY | 2, balanced | Calm alone falls into a sterile default and loses the "approachable" trait. Balanced adds one accent and one identity motif on a restrained base. |
-| RHYTHM | 2, consistent with breaks | Sections have different shapes (a timeline, comparable projects, a personal text, an action). A shared structure, broken where the content requires it. |
-| MOTION | 1, minimal | Hover and focus states, plus brief purposeful transitions (for example, theme change). Protects performance (ADR-0023) and respects `prefers-reduced-motion`. |
+| Dial   | Value                     | Reason                                                                                                                                                        |
+| ------ | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ENERGY | 2, balanced               | Calm alone falls into a sterile default and loses the "approachable" trait. Balanced adds one accent and one identity motif on a restrained base.             |
+| RHYTHM | 2, consistent with breaks | Sections have different shapes (a timeline, comparable projects, a personal text, an action). A shared structure, broken where the content requires it.       |
+| MOTION | 1, minimal                | Hover and focus states, plus brief purposeful transitions (for example, theme change). Protects performance (ADR-0023) and respects `prefers-reduced-motion`. |
 
 ## Personality
 
@@ -24,14 +24,14 @@ The first three are the foundation. "Approachable" is the differentiator that ke
 
 Palette: **warm neutrals as the base, petrol blue as the single accent.** Both themes ship (ADR-0028).
 
-| Role | Light | Dark | Reason |
-| --- | --- | --- | --- |
-| Background | `#f7f4ef` warm off-white | `#171513` warm near-black | Warm neutrals keep the petrol accent from feeling corporate. |
-| Surface | `#ece6dc` | `#24211d` | Secondary surfaces (for example, project entries) separate from the background without shadows. |
-| Body text | `#2b2824` | `#d9d3c9` | Warm, high-contrast text for long reading. |
-| Headings | `#1f1d1a` | `#f2ede5` | Strongest contrast for the hierarchy. |
-| Accent | `#1f5f74` petrol blue | `#6bb3c8` light petrol | Chosen by the owner because it feels like his own color. Petrol sits between blue and green: serious without the generic corporate blue. |
-| On accent | `#ffffff` | `#0a1519` | Text on accent-filled elements. |
+| Role       | Light                    | Dark                      | Reason                                                                                                                                   |
+| ---------- | ------------------------ | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Background | `#f7f4ef` warm off-white | `#171513` warm near-black | Warm neutrals keep the petrol accent from feeling corporate.                                                                             |
+| Surface    | `#ece6dc`                | `#24211d`                 | Secondary surfaces (for example, project entries) separate from the background without shadows.                                          |
+| Body text  | `#2b2824`                | `#d9d3c9`                 | Warm, high-contrast text for long reading.                                                                                               |
+| Headings   | `#1f1d1a`                | `#f2ede5`                 | Strongest contrast for the hierarchy.                                                                                                    |
+| Accent     | `#1f5f74` petrol blue    | `#6bb3c8` light petrol    | Chosen by the owner because it feels like his own color. Petrol sits between blue and green: serious without the generic corporate blue. |
+| On accent  | `#ffffff`                | `#0a1519`                 | Text on accent-filled elements.                                                                                                          |
 
 Rules:
 
@@ -41,10 +41,10 @@ Rules:
 
 ## Typography
 
-| Role | Typeface | Reason |
-| --- | --- | --- |
-| Headings | **Source Serif 4** | A serif gives craft and an editorial, human character to a serious base. |
-| Body and UI | **Source Sans 3** | Sister family designed to pair with Source Serif 4: harmony and maximum readability. A serious base that does not compete with the content. |
+| Role        | Typeface           | Reason                                                                                                                                      |
+| ----------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Headings    | **Source Serif 4** | A serif gives craft and an editorial, human character to a serious base.                                                                    |
+| Body and UI | **Source Sans 3**  | Sister family designed to pair with Source Serif 4: harmony and maximum readability. A serious base that does not compete with the content. |
 
 - Fonts are self-hosted (ADR-0034).
 - A type scale with a clear weight hierarchy, defined as tokens (ADR-0017).

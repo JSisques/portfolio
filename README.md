@@ -21,12 +21,18 @@ pnpm dev
 
 ## Commands
 
-| Command        | Action                                      |
-| -------------- | ------------------------------------------- |
-| `pnpm dev`     | Start the local development server.         |
-| `pnpm build`   | Build the production site into `dist/`.     |
-| `pnpm preview` | Preview the production build locally.       |
-| `pnpm check`   | Type-check the project with `astro check`.  |
+| Command             | Action                                                             |
+| ------------------- | ------------------------------------------------------------------ |
+| `pnpm dev`          | Start the local development server.                                |
+| `pnpm build`        | Build the production site into `dist/`.                            |
+| `pnpm preview`      | Preview the production build locally.                              |
+| `pnpm check`        | Type-check the project with `astro check`.                         |
+| `pnpm lint`         | Lint with ESLint.                                                  |
+| `pnpm format`       | Format every file with Prettier.                                   |
+| `pnpm format:check` | Check formatting without writing.                                  |
+| `pnpm test:changed` | Run the Vitest tests affected by commits not yet on `origin/main`. |
+
+`pnpm install` also installs the Git hooks (Husky): staged files are formatted and linted on commit, commit messages must follow [Conventional Commits](https://www.conventionalcommits.org/), and `pnpm test:changed` runs before each push.
 
 ## Documentation
 

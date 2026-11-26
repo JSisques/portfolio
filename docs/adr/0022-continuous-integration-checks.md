@@ -11,14 +11,14 @@ Local hooks can be bypassed (ADR-0019), so CI is the source of truth for quality
 
 CI runs on GitHub Actions for every pull request to `main`. All of these checks are **required** to merge:
 
-| Check | Validates |
-| --- | --- |
-| PR title | The title is a valid Conventional Commit (ADR-0020). |
-| Format and lint | Prettier and ESLint (ADR-0018). |
-| Types | `astro check` (ADR-0018). |
+| Check                      | Validates                                                      |
+| -------------------------- | -------------------------------------------------------------- |
+| PR title                   | The title is a valid Conventional Commit (ADR-0020).           |
+| Format and lint            | Prettier and ESLint (ADR-0018).                                |
+| Types                      | `astro check` (ADR-0018).                                      |
 | Unit and integration tests | The **full** Vitest suite, not only affected tests (ADR-0015). |
-| End-to-end tests | Playwright (ADR-0016). |
-| Build | Both targets: Cloudflare and Node/container image (ADR-0013). |
+| End-to-end tests           | Playwright (ADR-0016).                                         |
+| Build                      | Both targets: Cloudflare and Node/container image (ADR-0013).  |
 
 End-to-end tests run against a **local build inside CI**, with test doubles for the mail port and Turnstile test keys. They never depend on the preview deployment or on network services. Which build target is served for end-to-end tests is defined during setup, preferring the one closest to production.
 
