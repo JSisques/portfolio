@@ -21,15 +21,25 @@ test.describe("home page", () => {
     await expect(page.locator("html")).toHaveAttribute("lang", "es");
   });
 
-  test("Spanish home passes accessibility audit", async ({ page }) => {
-    await page.goto("/es/");
-    await expectNoAxeViolations(page);
-  });
+  // ADR-0028: the accessibility audit runs in both light and dark themes.
+  for (const scheme of ["light", "dark"] as const) {
+    test.describe(`${scheme} theme`, () => {
+      test.use({ colorScheme: scheme });
 
-  test("English home passes accessibility audit", async ({ page }) => {
-    await page.goto("/en/");
-    await expectNoAxeViolations(page);
-  });
+      for (const locale of ["es", "en"] as const) {
+        test(`${locale} home passes accessibility audit in ${scheme} theme`, async ({
+          page,
+        }) => {
+          await page.goto(`/${locale}/`);
+          await expect(page.locator("html")).toHaveAttribute(
+            "data-theme",
+            scheme,
+          );
+          await expectNoAxeViolations(page);
+        });
+      }
+    });
+  }
 
   test("language switcher switches locale and back", async ({ page }) => {
     await page.goto("/es/");
