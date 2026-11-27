@@ -25,6 +25,8 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@fontsource-variable/source-sans-3": "5.3.1",
+    "@fontsource-variable/source-serif-4": "5.3.1",
     "@tailwindcss/vite": "4.3.5",
     "astro": "7.4.13",
     "tailwindcss": "4.3.5"

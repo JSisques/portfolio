@@ -1,0 +1,87 @@
+---
+import "../styles/global.css";
+import sansFontUrl from "@fontsource-variable/source-sans-3/files/source-sans-3-latin-wght-normal.woff2?url";
+import { defaultLocale, locales, type Locale } from "../i18n/locales.js";
+import { alternateLinks, localizePath } from "../i18n/paths.js";
+import { t } from "../i18n/ui.js";
+import ThemeScript from "../components/ThemeScript.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  locale: Locale;
+}
+
+const { title, description, locale } = Astro.props;
+
+// Canonical and hreflang links need a site URL; skip them when there is none.
+const site = Astro.site;
+const pathname = Astro.url.pathname;
+const other = locales.find((l) => l !== locale) ?? defaultLocale;
+const switcherHref = localizePath(pathname, other);
+const canonical = site ? new URL(pathname, site).href : undefined;
+const alternates = site ? alternateLinks(pathname, site.href) : [];
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <ThemeScript />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <link rel="icon" href="data:," />
+    {canonical && <link rel="canonical" href={canonical} />}
+    {
+      alternates.map((alt) => (
+        <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
+      ))
+    }
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href={sansFontUrl}
+    />
+  </head>
+  <body>
+    <a
+      href="#content"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:rounded-sm focus:bg-surface focus:px-4 focus:py-2"
+    >
+      {t(locale, "skipLink")}
+    </a>
+    <header class="border-b border-surface">
+      <div
+        class="mx-auto flex max-w-2xl flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <a
+          href={`/${locale}/`}
+          class="inline-flex min-h-11 items-center font-serif text-xl font-semibold text-heading"
+        >
+          Javier Plaza Sisqués
+        </a>
+        <nav
+          aria-label={t(locale, "navLabel")}
+          class="flex min-h-11 items-center"
+        >
+          <a
+            href={switcherHref}
+            hreflang={other}
+            lang={other}
+            class="inline-flex min-h-11 min-w-11 items-center px-3"
+          >
+            {t(locale, "languageSwitcher")}
+          </a>
+          <ThemeToggle locale={locale} />
+        </nav>
+      </div>
+    </header>
+    <main id="content" class="mx-auto max-w-2xl px-4 py-6">
+      <slot />
+    </main>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+---
+import { type Locale } from "../i18n/locales.js";
+import { t } from "../i18n/ui.js";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<button
+  type="button"
+  data-theme-toggle
+  aria-pressed="false"
+  class="inline-flex min-h-11 min-w-11 items-center rounded-sm px-3 hover:bg-surface motion-safe:transition-colors"
+>
+  {t(locale, "themeToggle")}
+</button>
+
+<script>
+  // ADR-0028: aria-pressed reflects the applied theme; clicking switches it
+  // and stores the choice, so the next visit keeps it.
+  const syncThemeToggles = () => {
+    const pressed = document.documentElement.dataset.theme === "dark";
+    for (const toggle of document.querySelectorAll<HTMLElement>(
+      "[data-theme-toggle]",
+    )) {
+      toggle.setAttribute("aria-pressed", String(pressed));
+    }
+  };
+  syncThemeToggles();
+  for (const toggle of document.querySelectorAll("[data-theme-toggle]")) {
+    toggle.addEventListener("click", () => {
+      const next =
+        document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = next;
+      try {
+        localStorage.setItem("theme", next);
+      } catch {
+        // Storage can throw (private mode); the theme still switches.
+      }
+      syncThemeToggles();
+    });
+  }
+</script>
