@@ -42,8 +42,11 @@ describe("inline theme script and CSP", () => {
 
   it("covers the shipped script bytes with the CSP script-src hash", async () => {
     const html = await renderThemeScript();
-    const shipped = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+    // The component renders exactly one script element; slice its text.
+    const open = "<script>";
+    const start = html.indexOf(open) + open.length;
+    const shipped = html.slice(start, html.indexOf("</script>", start));
     const csp = securityHeaders["Content-Security-Policy"] ?? "";
-    expect(csp).toContain(`script-src 'self' ${scriptHash(shipped ?? "")}`);
+    expect(csp).toContain(`script-src 'self' ${scriptHash(shipped)}`);
   });
 });
