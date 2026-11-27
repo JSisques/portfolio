@@ -34,18 +34,19 @@ Single source of project rules for every AI agent working in this repository (AD
 
 ## Commands
 
-| Command             | Purpose                                                            |
-| ------------------- | ------------------------------------------------------------------ |
-| `pnpm install`      | Install dependencies.                                              |
-| `pnpm dev`          | Start the local development server.                                |
-| `pnpm build`        | Build the production site.                                         |
-| `pnpm check`        | Type-check with `astro check` (strict).                            |
-| `pnpm lint`         | Lint with ESLint.                                                  |
-| `pnpm format`       | Format every file with Prettier.                                   |
-| `pnpm format:check` | Check formatting without writing.                                  |
-| `pnpm test`         | Run unit and integration tests with Vitest.                        |
-| `pnpm test:changed` | Run the Vitest tests affected by commits not yet on `origin/main`. |
-| `pnpm test:e2e`     | Run Playwright end-to-end tests against the built site.            |
+| Command                | Purpose                                                            |
+| ---------------------- | ------------------------------------------------------------------ |
+| `pnpm install`         | Install dependencies.                                              |
+| `pnpm dev`             | Start the local development server.                                |
+| `pnpm build`           | Build the production site.                                         |
+| `pnpm check`           | Type-check with `astro check` (strict).                            |
+| `pnpm lint`            | Lint with ESLint.                                                  |
+| `pnpm format`          | Format every file with Prettier.                                   |
+| `pnpm format:check`    | Check formatting without writing.                                  |
+| `pnpm test`            | Run unit and integration tests with Vitest.                        |
+| `pnpm test:changed`    | Run the Vitest tests affected by commits not yet on `origin/main`. |
+| `pnpm test:e2e`        | Run Playwright end-to-end tests against the built site.            |
+| `pnpm test:lighthouse` | Run Lighthouse CI audits on the built site.                        |
 
 `pnpm exec playwright install chromium` installs the Chromium browser binary once (required before running `pnpm test:e2e`).
 
@@ -59,7 +60,9 @@ Before considering a change done, run the commands that exist in the table above
 
 ## CI
 
-GitHub Actions runs the following checks on every PR to `main` (ADR-0022): PR title (Conventional Commits via commitlint), Prettier formatting, ESLint, `astro check` (type-check), full Vitest suite, Playwright end-to-end, and `astro build`. All are required for merge.
+GitHub Actions runs the following checks on every PR to `main` (ADR-0022): PR title (Conventional Commits via commitlint), Prettier formatting, ESLint, `astro check` (type-check), full Vitest suite, Playwright end-to-end, Lighthouse (accessibility, best practices, SEO, performance gates), and `astro build`. All are required for merge.
+
+CodeQL scans the codebase on every PR and on a weekly schedule (ADR-0033). Dependency updates are handled by Renovate: every update is a `chore(deps):` PR, minor/patch/pin/digest updates are automerged when CI passes, and major updates open a PR for manual review (ADR-0032).
 
 Preview deployments run on every PR to `main` (ADR-0021, ADR-0035): the site is built and deployed via Cloudflare Worker Previews (Wrangler 4.135.0+) on a separate Worker, `jsisques-net-preview`, named `pr-<number>`, deleted when the PR closes. A sticky comment by `github-actions[bot]` shows the preview URL and commit SHA. Fork PRs are skipped.
 

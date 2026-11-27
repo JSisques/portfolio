@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "helpers:pinGitHubActionDigests",
+    ":pinAllExceptPeerDependencies",
+    ":semanticCommitTypeAll(chore)"
+  ],
+  "semanticCommitScope": "deps",
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest", "pinDigest"],
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "matchDepNames": ["prettier-plugin-astro"],
+      "allowedVersions": "<1.0.0",
+      "description": "prettier-plugin-tailwindcss does not walk the 1.x AST"
+    }
+  ],
+  "minimumReleaseAge": "1 day"
+}

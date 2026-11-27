@@ -17,6 +17,7 @@ export default defineConfig(
       "test-results/",
       "playwright-report/",
       "blob-report/",
+      ".lighthouseci/",
     ],
   },
   js.configs.recommended,

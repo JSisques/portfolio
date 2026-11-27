@@ -21,18 +21,19 @@ pnpm dev
 
 ## Commands
 
-| Command             | Action                                                             |
-| ------------------- | ------------------------------------------------------------------ |
-| `pnpm dev`          | Start the local development server.                                |
-| `pnpm build`        | Build the production site into `dist/`.                            |
-| `pnpm preview`      | Preview the production build locally.                              |
-| `pnpm check`        | Type-check the project with `astro check`.                         |
-| `pnpm lint`         | Lint with ESLint.                                                  |
-| `pnpm format`       | Format every file with Prettier.                                   |
-| `pnpm format:check` | Check formatting without writing.                                  |
-| `pnpm test`         | Run unit and integration tests with Vitest.                        |
-| `pnpm test:changed` | Run the Vitest tests affected by commits not yet on `origin/main`. |
-| `pnpm test:e2e`     | Run Playwright end-to-end tests against the built site.            |
+| Command                | Action                                                             |
+| ---------------------- | ------------------------------------------------------------------ |
+| `pnpm dev`             | Start the local development server.                                |
+| `pnpm build`           | Build the production site into `dist/`.                            |
+| `pnpm preview`         | Preview the production build locally.                              |
+| `pnpm check`           | Type-check the project with `astro check`.                         |
+| `pnpm lint`            | Lint with ESLint.                                                  |
+| `pnpm format`          | Format every file with Prettier.                                   |
+| `pnpm format:check`    | Check formatting without writing.                                  |
+| `pnpm test`            | Run unit and integration tests with Vitest.                        |
+| `pnpm test:changed`    | Run the Vitest tests affected by commits not yet on `origin/main`. |
+| `pnpm test:e2e`        | Run Playwright end-to-end tests against the built site.            |
+| `pnpm test:lighthouse` | Run Lighthouse CI audits on the built site.                        |
 
 `pnpm exec playwright install chromium` installs the Chromium browser binary once (required before running `pnpm test:e2e`).
 
@@ -40,7 +41,9 @@ pnpm dev
 
 ## CI
 
-All PRs to `main` are validated by a GitHub Actions pipeline: PR title (Conventional Commits), format and lint, type-check (`astro check`), full Vitest test suite, Playwright end-to-end, and build. All checks are required to merge.
+All PRs to `main` are validated by a GitHub Actions pipeline: PR title (Conventional Commits), format and lint, type-check (`astro check`), full Vitest test suite, Playwright end-to-end, Lighthouse (accessibility, best practices, SEO, performance gates), and build. All checks are required to merge.
+
+CodeQL scans the codebase on every PR and on a weekly schedule (ADR-0033). Dependency updates are handled by Renovate: every update is a `chore(deps):` PR, minor/patch/pin/digest updates are automerged when CI passes, and major updates open a PR for manual review (ADR-0032).
 
 ### Preview deployments
 
