@@ -62,6 +62,47 @@ test("initial theme is dark when the system declares no preference", async ({
   await expectTheme(page, "dark");
 });
 
+test.describe("theme toggle", () => {
+  test.use({ colorScheme: "dark" });
+
+  test("switches from dark to light and stores the choice", async ({
+    page,
+  }) => {
+    await page.goto("/es/");
+    const toggle = page.getByRole("button", { name: "Tema oscuro" });
+    await expect(toggle).toHaveAttribute("aria-pressed", "true");
+    await toggle.click();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+    await expect(toggle).toHaveAttribute("aria-pressed", "false");
+    expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe(
+      "light",
+    );
+  });
+
+  test("stored choice survives a reload over system dark", async ({ page }) => {
+    await page.goto("/es/");
+    await page.getByRole("button", { name: "Tema oscuro" }).click();
+    await page.reload();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  });
+
+  test("toggles with the keyboard", async ({ page }) => {
+    await page.goto("/es/");
+    const toggle = page.getByRole("button", { name: "Tema oscuro" });
+    await toggle.focus();
+    await page.keyboard.press("Space");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+    await expect(toggle).toHaveAttribute("aria-pressed", "false");
+  });
+
+  test("is labeled in the page language", async ({ page }) => {
+    await page.goto("/en/");
+    await expect(
+      page.getByRole("button", { name: "Dark theme" }),
+    ).toHaveAttribute("aria-pressed", "true");
+  });
+});
+
 test("theme script is a classic inline script before the first stylesheet", async ({
   page,
 }) => {

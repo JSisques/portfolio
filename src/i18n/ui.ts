@@ -5,6 +5,7 @@ interface UiStrings {
   skipLink: string;
   languageSwitcher: string;
   navLabel: string;
+  themeToggle: string;
 }
 
 const es: UiStrings = {
@@ -12,6 +13,7 @@ const es: UiStrings = {
   skipLink: "Saltar al contenido",
   languageSwitcher: "English",
   navLabel: "Principal",
+  themeToggle: "Tema oscuro",
 };
 
 const en: UiStrings = {
@@ -19,6 +21,7 @@ const en: UiStrings = {
   skipLink: "Skip to content",
   languageSwitcher: "Español",
   navLabel: "Main",
+  themeToggle: "Dark theme",
 };
 
 export const ui: Record<Locale, UiStrings> = { es, en };
