@@ -1,18 +1,5 @@
-<script is:inline>
-  // ADR-0028: stored "theme" choice wins; else system preference; dark fallback.
-  (() => {
-    let stored = null;
-    try {
-      stored = localStorage.getItem("theme");
-    } catch {
-      // Storage can throw (private mode, blocked); fall back to system preference.
-    }
-    const theme =
-      stored === "light" || stored === "dark"
-        ? stored
-        : matchMedia("(prefers-color-scheme: light)").matches
-          ? "light"
-          : "dark";
-    document.documentElement.dataset.theme = theme;
-  })();
-</script>
+---
+import { themeScript } from "../security/headers.js";
+---
+
+<script is:inline set:html={themeScript} />
