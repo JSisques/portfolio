@@ -20,13 +20,17 @@ Assumptions (orchestrator, not owner-requested): the edge redirect for `/` is a 
 
 ## Tasks
 
-| ID  | Specs      | Title                                        | Route                        | Status  | Commit |
-| --- | ---------- | -------------------------------------------- | ---------------------------- | ------- | ------ |
-| A1  | S2, S3     | Design tokens and self-hosted fonts          | delegated (gentle-ai-worker) | pending |        |
-| A2  | S1, S5     | i18n routing, base layout, language switcher | delegated (gentle-ai-worker) | pending |        |
-| A3  | S4, S5, S6 | Light/dark themes and toggle                 | delegated (gentle-ai-worker) | pending |        |
+| ID  | Specs  | Title                                                | Route                        | Status | Commit    |
+| --- | ------ | ---------------------------------------------------- | ---------------------------- | ------ | --------- |
+| A1  | S2, S3 | Design tokens and self-hosted fonts                  | delegated (gentle-ai-worker) | done   | `adbc317` |
+| A2  | S1, S5 | i18n routing, base layout, language switcher (B1-B5) | delegated (gentle-ai-worker) | done   | `2b6b9fb` |
+| C1  | S4     | Theme applied before first paint (+ C1b test fix)    | delegated (gentle-ai-worker) | done   | `31b9211` |
+| C2  | S4, S5 | Theme toggle stored in `localStorage`                | delegated (gentle-ai-worker) | done   | `e184d7a` |
+| C3  | S4     | Axe audit in light and dark themes                   | delegated (gentle-ai-worker) | done   | `9664bda` |
+| C4  | S6     | antislop Delivery Gate audit (C4a, C4b, read-only)   | delegated (gentle-ai-worker) | done   | n/a       |
+| C5  | S6     | Hover states (gap found by C4b)                      | delegated (gentle-ai-worker) | done   | `8928e65` |
 
-Route evidence: the owner asked to delegate as much as possible to the local-model worker; the orchestrator reviews each unit. Units are sequential (A2 and A3 edit the same layout).
+Route evidence: the owner asked to delegate as much as possible to the local-model worker; the orchestrator reviews each unit. Units are sequential (hardware limits; A2 and C1-C5 share the layout). Risk: none of items 1-4 or 6; item 5 considered (two pinned font dependencies, Lighthouse CI URLs) and not escalated: data-only packages, and `pnpm test:lighthouse` passes locally on the new URLs.
 
 ## Log
 
@@ -37,3 +41,5 @@ Route evidence: the owner asked to delegate as much as possible to the local-mod
 - **L5** (2026-11-27) B2: Astro 7 needs `src/pages/index.astro` (`Astro.redirect("/es/")`) with `redirectToDefaultLocale: false`; deleting it fails with `MissingIndexForInternationalization`. Static fallback is Astro's 302 meta refresh (2 s delay by design, `astro/dist/core/routing/3xx.js`); production `/` uses the edge 302 in `public/_redirects`. Checks by the orchestrator: `pnpm test` 22/22, `pnpm test:e2e` 6/6, `check`, `lint`, `format:check` clean. A2 committed (`2b6b9fb`).
 - **L6** (2026-11-27) C1 worker was cancelled after writing `ThemeScript.astro` + `theme.spec.ts` (6/7 green). The failing "no preference" test used CDP `prefersColorScheme: "no-preference"`, which Chromium no longer supports; C1b rewrites it to stub `matchMedia`.
 - **L7** (2026-11-27) Owner: "PAra el resto de tareas, si un agente no sabe como hacer algo tiene que elevarlo al orquestador, mira la skill atomic-task-decomposition". Remaining delegations use the skill's task contract: workers stop with `status: needs-decision` on any unsettled choice or incident; the orchestrator answers in the same worker session.
+- **L8** (2026-11-27) C4 worker cancelled with no report (too broad: 6 skills + full gate). Re-split into C4a (Block 1) and C4b (Blocks 2-4) with the checklist inline and a closed reading list. C4a: 17/17 PASS or N/A. C4b: 31 PASS, 1 N/A (L6 identity motif, deferred to #9/#10), 0 FAIL, R-20 NEEDS-DECISION decided by the orchestrator as PASS (owner-specific palette and type; re-run R-20 when #9/#10 content lands). Gap found: DESIGN.md MOTION 1 asks for hover states; fixed in C5.
+- **L9** (2026-11-27) Final checks by the orchestrator on `8928e65`: `pnpm test` 22/22, `pnpm test:e2e` 21/21, `pnpm test:lighthouse` exit 0 (`/es/`, `/en/`), `pnpm build` no warnings, `check`, `lint`, `format:check` clean. Native review assess: medium, `review_due: false` (`under_budget`). Next: owner decides push and PR (closes #7).
