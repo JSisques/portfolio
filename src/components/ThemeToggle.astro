@@ -13,7 +13,7 @@ const { locale } = Astro.props;
   type="button"
   data-theme-toggle
   aria-pressed="false"
-  class="inline-flex min-h-11 min-w-11 items-center rounded-sm px-3"
+  class="inline-flex min-h-11 min-w-11 items-center rounded-sm px-3 hover:bg-surface motion-safe:transition-colors"
 >
   {t(locale, "themeToggle")}
 </button>

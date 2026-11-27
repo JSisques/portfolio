@@ -137,3 +137,41 @@ test("theme script is a classic inline script before the first stylesheet", asyn
   expect(info.async).toBe(false);
   expect(info.styleIndex).toBeGreaterThan(info.scriptIndex);
 });
+
+test.describe("hover states", () => {
+  test.use({ colorScheme: "dark" });
+
+  test("hovering a language switcher link underlines it", async ({ page }) => {
+    await page.goto("/es/");
+    const link = page.getByRole("link", { name: "English" });
+    await link.hover();
+    const decoration = await link.evaluate(
+      (el) => getComputedStyle(el).textDecorationLine,
+    );
+    expect(decoration).toBe("underline");
+  });
+
+  test("hovering the theme toggle turns its background surface-colored", async ({
+    page,
+  }) => {
+    await page.goto("/es/");
+    const toggle = page.getByRole("button", { name: "Tema oscuro" });
+    await toggle.hover();
+    // Probe: read --surface in the same format the browser computes for a
+    // background-color, so the comparison is format-stable.
+    const isSurface = () =>
+      page.evaluate(() => {
+        const button = document.querySelector<HTMLElement>(
+          "[data-theme-toggle]",
+        );
+        if (!button) return false;
+        const probe = document.createElement("div");
+        probe.style.backgroundColor = "var(--surface)";
+        document.body.appendChild(probe);
+        const surface = getComputedStyle(probe).backgroundColor;
+        probe.remove();
+        return getComputedStyle(button).backgroundColor === surface;
+      });
+    await expect.poll(isSurface).toBe(true);
+  });
+});
