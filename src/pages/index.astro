@@ -1,21 +1,4 @@
 ---
-import "../styles/global.css";
+// ADR-0026: the root redirects to the default locale home.
+return Astro.redirect("/es/");
 ---
-
-<html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="Web personal y portfolio de Javier Plaza Sisqués."
-    />
-    <link rel="icon" href="data:," />
-    <title>Javier Plaza Sisqués</title>
-  </head>
-  <body>
-    <main>
-      <h1>Javier Plaza Sisqués</h1>
-    </main>
-  </body>
-</html>

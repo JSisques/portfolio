@@ -1,0 +1,29 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import {
+  defaultLocale,
+  isLocale,
+  locales,
+  type Locale,
+} from "../../i18n/locales.js";
+import { t } from "../../i18n/ui.js";
+
+export function getStaticPaths() {
+  return locales.map((locale) => ({
+    params: { lang: locale },
+  }));
+}
+
+// The locale comes from the route param, validated; the fallback covers
+// contexts (e.g. the Astro container) where the param is not set.
+const lang = Astro.params.lang;
+const locale: Locale = isLocale(lang) ? lang : defaultLocale;
+---
+
+<BaseLayout
+  title="Javier Plaza Sisqués"
+  description={t(locale, "siteDescription")}
+  locale={locale}
+>
+  <h1>Javier Plaza Sisqués</h1>
+</BaseLayout>
