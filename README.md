@@ -43,6 +43,8 @@ pnpm dev
 
 All PRs to `main` are validated by a GitHub Actions pipeline: PR title (Conventional Commits), format and lint, type-check (`astro check`), full Vitest test suite, Playwright end-to-end, Lighthouse (accessibility, best practices, SEO, performance gates), and build. All checks are required to merge.
 
+Security headers and a strict Content Security Policy are defined once in `src/security/headers.ts`, written to `dist/_headers` for Cloudflare, and served by `astro preview` on Node (ADR-0033).
+
 CodeQL scans the codebase on every PR and on a weekly schedule (ADR-0033). Dependency updates are handled by Renovate: every update is a `chore(deps):` PR, minor/patch/pin/digest updates are automerged when CI passes, and major updates open a PR for manual review (ADR-0032).
 
 ### Preview deployments
