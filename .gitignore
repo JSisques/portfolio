@@ -23,5 +23,8 @@ playwright-report/
 blob-report/
 playwright/.cache/
 
+# Lighthouse CI reports
+.lighthouseci/
+
 # Wrangler local state
 .wrangler/
