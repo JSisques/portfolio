@@ -4,6 +4,7 @@ import sansFontUrl from "@fontsource-variable/source-sans-3/files/source-sans-3-
 import { defaultLocale, locales, type Locale } from "../i18n/locales.js";
 import { alternateLinks, localizePath } from "../i18n/paths.js";
 import { t } from "../i18n/ui.js";
+import ThemeScript from "../components/ThemeScript.astro";
 
 interface Props {
   title: string;
@@ -26,6 +27,7 @@ const alternates = site ? alternateLinks(pathname, site.href) : [];
 <html lang={locale}>
   <head>
     <meta charset="utf-8" />
+    <ThemeScript />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title}</title>
