@@ -18,6 +18,7 @@ export default defineConfig(
       "playwright-report/",
       "blob-report/",
       ".lighthouseci/",
+      ".wrangler/",
     ],
   },
   js.configs.recommended,
