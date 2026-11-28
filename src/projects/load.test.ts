@@ -82,6 +82,28 @@ describe("loadRepositoryData", () => {
     );
   });
 
+  it("rejects naming the repository when the fixture is not an object", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "projects-fixture-"));
+    const path = join(dir, "github.json");
+    writeFileSync(path, "[]");
+
+    await expect(
+      loadRepositoryData(REPOS, { GITHUB_DATA_FIXTURE: path }),
+    ).rejects.toThrow(
+      "Missing fixture entry for repository JSisques/portfolio",
+    );
+  });
+
+  it("rejects when the fixture is not valid JSON", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "projects-fixture-"));
+    const path = join(dir, "github.json");
+    writeFileSync(path, "{ not json");
+
+    await expect(
+      loadRepositoryData(REPOS, { GITHUB_DATA_FIXTURE: path }),
+    ).rejects.toThrow(SyntaxError);
+  });
+
   it("rejects when the fixture file does not exist", async () => {
     await expect(
       loadRepositoryData(REPOS, {
