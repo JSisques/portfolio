@@ -44,6 +44,15 @@ describe("contentSecurityPolicy", () => {
     expect(contentSecurityPolicy).toContain("object-src 'none'");
   });
 
+  it("allows the Turnstile origin for scripts and frames (S5)", () => {
+    expect(contentSecurityPolicy).toContain(
+      `script-src 'self' ${scriptHash(themeScript)} https://challenges.cloudflare.com`,
+    );
+    expect(contentSecurityPolicy).toContain(
+      "frame-src https://challenges.cloudflare.com",
+    );
+  });
+
   it("allows the inline theme script by its hash only", () => {
     expect(contentSecurityPolicy).toContain(
       `script-src 'self' ${scriptHash(themeScript)}`,

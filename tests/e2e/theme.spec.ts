@@ -1,4 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
+import { type Page } from "@playwright/test";
+import { test, expect } from "./test-base.js";
 
 // ADR-0028: the theme follows the system preference (dark when none is
 // declared); the visitor's "theme" choice in localStorage takes precedence

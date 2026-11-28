@@ -1,4 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
+import { type Page } from "@playwright/test";
+import { test, expect } from "./test-base.js";
 import AxeBuilder from "@axe-core/playwright";
 
 // ADR-0016, ADR-0023: e2e tests - run against the built site and

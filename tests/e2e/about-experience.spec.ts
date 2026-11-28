@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
-import { test, expect, type Locator } from "@playwright/test";
+import { type Locator } from "@playwright/test";
+import { test, expect } from "./test-base.js";
 
 // Issue #9: about and experience render in both locales, and margin notes
 // (DESIGN.md identity motif) link to real targets and adapt on mobile.

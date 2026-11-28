@@ -33,12 +33,14 @@ export function scriptHash(source: string): string {
 
 // A strict CSP (S2): self-only sources, the inline theme script allowed by
 // its hash, no framing, no objects, no unsafe-inline or unsafe-eval.
-// Turnstile and Cloudflare Web Analytics origins are added by their own
-// tasks. `upgrade-insecure-requests` is deliberately omitted: it would break
-// the http://localhost preview.
+// Turnstile loads its script and its challenge frame from
+// challenges.cloudflare.com, so that origin is allowed by `script-src` and
+// `frame-src` (S5); Cloudflare Web Analytics is added by its own task.
+// `upgrade-insecure-requests` is deliberately omitted: it would break the
+// http://localhost preview.
 export const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' ${scriptHash(themeScript)}`,
+  `script-src 'self' ${scriptHash(themeScript)} https://challenges.cloudflare.com`,
   "style-src 'self'",
   "img-src 'self' data:",
   "font-src 'self'",
@@ -46,6 +48,7 @@ export const contentSecurityPolicy = [
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
+  "frame-src https://challenges.cloudflare.com",
   "frame-ancestors 'none'",
 ].join("; ");
 

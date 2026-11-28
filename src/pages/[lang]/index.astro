@@ -12,6 +12,7 @@ import { siteEntries } from "../../content/schemas.js";
 import AboutSection from "../../components/AboutSection.astro";
 import ExperienceSection from "../../components/ExperienceSection.astro";
 import ProjectsSection from "../../components/ProjectsSection.astro";
+import ContactSection from "../../components/ContactSection.astro";
 import { featuredRepositories } from "../../projects/featured.js";
 import { loadRepositoryData } from "../../projects/load.js";
 import { buildProjects } from "../../projects/build.js";
@@ -53,5 +54,6 @@ const projects = buildProjects(
     {about && <AboutSection locale={locale} about={about} />}
     <ExperienceSection locale={locale} entries={experience} />
     <ProjectsSection locale={locale} projects={projects} />
+    <ContactSection locale={locale} />
   </div>
 </BaseLayout>

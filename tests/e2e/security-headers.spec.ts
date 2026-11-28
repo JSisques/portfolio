@@ -1,10 +1,11 @@
-import { test, expect, type Page } from "@playwright/test";
+import { type Page } from "@playwright/test";
+import { test, expect } from "./test-base.js";
 import { securityHeaders } from "../../src/security/headers.js";
 
 // ADR-0033: every response carries the security headers and the strict CSP
-// defined in src/security/headers.ts. This suite runs against the Node
-// `astro preview` server; the Cloudflare `_headers` file renders the same
-// values (tests/integration/security-integration.test.ts).
+// defined in src/security/headers.ts. This suite runs against `astro
+// preview`, which runs the Worker and serves the generated `_headers` file
+// (tests/integration/security-integration.test.ts).
 
 // Records every CSP violation the page reports, before any page script runs.
 async function recordViolations(page: Page) {

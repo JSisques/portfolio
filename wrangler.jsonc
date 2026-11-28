@@ -3,7 +3,12 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "jsisques-net",
   "compatibility_date": "2026-11-26",
+  // The @astrojs/cloudflare adapter (T11): `astro build` writes the Worker
+  // to dist/server and the prerendered pages to dist/client, and redirects
+  // wrangler to its generated config (.wrangler/deploy/config.json).
+  "main": "@astrojs/cloudflare/entrypoints/server",
   "assets": {
+    "binding": "ASSETS",
     "directory": "./dist",
   },
   // The custom domain jsisques.net is attached once in the Cloudflare dashboard,
@@ -13,6 +18,22 @@
   // jsisques-net-preview Worker, whose hosts are set in the dashboard.
   "workers_dev": false,
   "preview_urls": false,
-  // Pull request Previews (ADR-0021). They never inherit production settings.
-  "previews": {},
+  // Contact form (ADR-0007, ADR-0014). Production delivers through the
+  // send_email binding, restricted to verified destination addresses. The
+  // recipient, the sender, and the Turnstile secret are Worker secrets
+  // (`wrangler secret put CONTACT_RECIPIENT`, `MAIL_FROM`,
+  // `TURNSTILE_SECRET_KEY`), never in the repository.
+  "vars": {
+    "MAIL_ADAPTER": "cloudflare",
+  },
+  "send_email": [{ "name": "SEND_EMAIL" }],
+  // Pull request Previews (ADR-0021). They never inherit production settings:
+  // mail is log-only, and Turnstile uses Cloudflare's public always-pass test
+  // secret, matching the test site key the preview build falls back to.
+  "previews": {
+    "vars": {
+      "MAIL_ADAPTER": "log",
+      "TURNSTILE_SECRET_KEY": "1x0000000000000000000000000000000AA",
+    },
+  },
 }

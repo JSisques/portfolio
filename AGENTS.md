@@ -31,7 +31,7 @@ Single source of project rules for every AI agent working in this repository (AD
 - Tests never call real external services (GitHub, email). Use test doubles or mocked HTTP.
 - Use the design tokens defined in the Tailwind theme. Avoid arbitrary one-off values (ADR-0017).
 - Pin exact dependency versions (ADR-0032). `pnpm-lock.yaml` is the only lockfile.
-- Security headers and the CSP are defined once in `src/security/headers.ts` (ADR-0033). The build writes them to `dist/_headers` for Cloudflare and `astro preview` serves them on Node. Any new script, style, or external origin needs a CSP update; inline scripts are allowed only by hash.
+- Security headers and the CSP are defined once in `src/security/headers.ts` (ADR-0033). The build writes them to `dist/client/_headers` for Cloudflare and `astro preview` serves them on Node. Any new script, style, or external origin needs a CSP update; inline scripts are allowed only by hash.
 
 ## Commands
 

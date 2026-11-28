@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./test-base.js";
 import fixture from "./fixtures/github.json" with { type: "json" };
 
 // Issue #10: featured projects render with GitHub data and the local
