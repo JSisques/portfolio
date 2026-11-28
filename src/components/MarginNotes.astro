@@ -1,0 +1,34 @@
+---
+import type { MarginNote } from "../content/schemas.js";
+
+// DESIGN.md identity motif. Place it inside a `relative` block next to the
+// text it annotates: inline in the text flow on small screens, in the right
+// margin from the `xl` breakpoint, where the page leaves room for it.
+interface Props {
+  notes: MarginNote[];
+}
+
+const { notes } = Astro.props;
+---
+
+{
+  notes.length > 0 && (
+    <aside
+      data-margin-notes
+      class="mt-2 border-l-2 border-accent pl-3 text-sm xl:absolute xl:top-0 xl:left-full xl:mt-0 xl:ml-8 xl:w-56"
+    >
+      <ul>
+        {notes.map((note) => (
+          <li>
+            <a
+              href={note.href}
+              class="inline-flex min-h-11 items-center text-accent underline-offset-2 hover:underline focus-visible:underline"
+            >
+              {note.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  )
+}
