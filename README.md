@@ -76,11 +76,7 @@ For rollback, the dispatch input accepts a published release tag. The alternativ
 
 The contact form posts to `/api/contact`, the only on-demand route; every page stays prerendered (ADR-0007, ADR-0014, ADR-0035). The mail adapter is selected by `MAIL_ADAPTER`: `cloudflare` (production `vars` in `wrangler.jsonc`) delivers through the `send_email` binding with the visitor as `Reply-To`; `log` (Previews), unset, or any unknown value only logs, so a Preview or a misconfigured environment never sends email (ADR-0021). `smtp` is reserved for the container target (T13). Nothing is persisted.
 
-Production setup, done once by the owner:
-
-- Enable Email Routing on `jsisques.net` and verify the destination address.
-- Set the Worker secrets on `jsisques-net`: `wrangler secret put CONTACT_RECIPIENT` (the verified destination), `MAIL_FROM` (a sender on `jsisques.net`), and `TURNSTILE_SECRET_KEY`.
-- Add the Turnstile site key as the `TURNSTILE_SITE_KEY` variable of the `production` GitHub environment. The deploy fails without it.
+Production needs a one-time setup by the owner (Email Routing, a verified destination address, a Turnstile widget, three Worker secrets, and the `TURNSTILE_SITE_KEY` variable of the `production` GitHub environment, without which the deploy fails). The steps, a real delivery test from a local Worker, and troubleshooting are in [docs/contact-form.md](docs/contact-form.md).
 
 Previews and local builds use Cloudflare's public Turnstile test keys. For `pnpm dev`, put `TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA` in `.dev.vars` (ignored by git).
 
@@ -94,6 +90,7 @@ Releases are automated with [release-please](https://github.com/googleapis/relea
 - [Architecture decisions](docs/adr/): one ADR per decision.
 - [Design direction](DESIGN.md): visual identity.
 - [Workflow](docs/workflow.md): how decisions are made and how changes reach a release.
+- [Contact form](docs/contact-form.md): production setup, delivery test, and troubleshooting.
 - [Agent rules](AGENTS.md): instructions every AI agent follows in this repository.
 
 ## License
