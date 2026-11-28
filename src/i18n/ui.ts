@@ -8,6 +8,8 @@ interface UiStrings {
   themeToggle: string;
   aboutHeading: string;
   experienceHeading: string;
+  responsibilitiesHeading: string;
+  impactHeading: string;
 }
 
 const es: UiStrings = {
@@ -18,6 +20,8 @@ const es: UiStrings = {
   themeToggle: "Tema oscuro",
   aboutHeading: "Sobre mí",
   experienceHeading: "Experiencia",
+  responsibilitiesHeading: "Responsabilidades",
+  impactHeading: "Impacto",
 };
 
 const en: UiStrings = {
@@ -28,6 +32,8 @@ const en: UiStrings = {
   themeToggle: "Dark theme",
   aboutHeading: "About me",
   experienceHeading: "Experience",
+  responsibilitiesHeading: "Responsibilities",
+  impactHeading: "Impact",
 };
 
 export const ui: Record<Locale, UiStrings> = { es, en };
