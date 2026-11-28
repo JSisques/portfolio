@@ -6,6 +6,8 @@ interface UiStrings {
   languageSwitcher: string;
   navLabel: string;
   themeToggle: string;
+  aboutHeading: string;
+  experienceHeading: string;
 }
 
 const es: UiStrings = {
@@ -14,6 +16,8 @@ const es: UiStrings = {
   languageSwitcher: "English",
   navLabel: "Principal",
   themeToggle: "Tema oscuro",
+  aboutHeading: "Sobre mí",
+  experienceHeading: "Experiencia",
 };
 
 const en: UiStrings = {
@@ -22,6 +26,8 @@ const en: UiStrings = {
   languageSwitcher: "Español",
   navLabel: "Main",
   themeToggle: "Dark theme",
+  aboutHeading: "About me",
+  experienceHeading: "Experience",
 };
 
 export const ui: Record<Locale, UiStrings> = { es, en };

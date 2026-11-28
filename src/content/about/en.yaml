@@ -1,0 +1,11 @@
+# Placeholder until the owner provides the real text (AGENTS.md: no fabricated content).
+locale: en
+visibility: both
+summary: "[REAL DATA]"
+stack: "[REAL DATA]"
+workingStyle: "[REAL DATA]"
+notes:
+  - label: "Why Astro: ADR-0004"
+    href: https://github.com/JSisques/portfolio/blob/main/docs/adr/0004-astro-as-web-framework.md
+  - label: "How the agents work: ADR-0030"
+    href: https://github.com/JSisques/portfolio/blob/main/docs/adr/0030-agent-instructions-and-workflow-docs.md
