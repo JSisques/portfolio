@@ -7,6 +7,10 @@ import {
   type Locale,
 } from "../../i18n/locales.js";
 import { t } from "../../i18n/ui.js";
+import { getCollection } from "astro:content";
+import { siteEntries } from "../../content/schemas.js";
+import AboutSection from "../../components/AboutSection.astro";
+import ExperienceSection from "../../components/ExperienceSection.astro";
 
 export function getStaticPaths() {
   return locales.map((locale) => ({
@@ -18,6 +22,11 @@ export function getStaticPaths() {
 // contexts (e.g. the Astro container) where the param is not set.
 const lang = Astro.params.lang;
 const locale: Locale = isLocale(lang) ? lang : defaultLocale;
+
+const about = siteEntries(await getCollection("about"), locale)[0]?.data;
+const experience = siteEntries(await getCollection("experience"), locale).map(
+  (entry) => entry.data,
+);
 ---
 
 <BaseLayout
@@ -26,4 +35,8 @@ const locale: Locale = isLocale(lang) ? lang : defaultLocale;
   locale={locale}
 >
   <h1>Javier Plaza Sisqués</h1>
+  <div class="mt-10 space-y-16">
+    {about && <AboutSection locale={locale} about={about} />}
+    <ExperienceSection locale={locale} entries={experience} />
+  </div>
 </BaseLayout>

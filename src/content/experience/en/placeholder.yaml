@@ -1,0 +1,11 @@
+# Placeholder until the owner provides real roles (AGENTS.md: no fabricated content).
+locale: en
+visibility: both
+order: 1
+role: "[REAL DATA]"
+company: "[REAL DATA]"
+period: "[REAL DATA]"
+responsibilities:
+  - "[REAL DATA]"
+impact:
+  - "[REAL DATA]"

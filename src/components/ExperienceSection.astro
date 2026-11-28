@@ -1,0 +1,53 @@
+---
+import type { Experience } from "../content/schemas.js";
+import type { Locale } from "../i18n/locales.js";
+import { t } from "../i18n/ui.js";
+import MarginNotes from "./MarginNotes.astro";
+
+// DESIGN.md: the experience is a timeline — the shared section structure,
+// broken here by the list shape with a rule along the roles.
+interface Props {
+  locale: Locale;
+  entries: Experience[];
+}
+
+const { locale, entries } = Astro.props;
+const roles = [...entries].sort((a, b) => a.order - b.order);
+---
+
+{
+  roles.length > 0 && (
+    <section id="experience" aria-labelledby="experience-heading">
+      <h2 id="experience-heading" class="text-3xl font-semibold">
+        {t(locale, "experienceHeading")}
+      </h2>
+      <ol class="mt-8 border-l-2 border-surface pl-6">
+        {roles.map((entry) => (
+          <li class="relative pb-10 last:pb-0">
+            <h3 class="text-xl font-semibold">{entry.role}</h3>
+            <p class="mt-1">
+              {entry.company} · {entry.period}
+            </p>
+            <h4 class="mt-4 text-sm font-semibold">
+              {t(locale, "responsibilitiesHeading")}
+            </h4>
+            <ul class="mt-2 list-disc pl-5">
+              {entry.responsibilities.map((item) => (
+                <li class="mt-1">{item}</li>
+              ))}
+            </ul>
+            <h4 class="mt-4 text-sm font-semibold">
+              {t(locale, "impactHeading")}
+            </h4>
+            <ul class="mt-2 list-disc pl-5">
+              {entry.impact.map((item) => (
+                <li class="mt-1">{item}</li>
+              ))}
+            </ul>
+            <MarginNotes notes={entry.notes} />
+          </li>
+        ))}
+      </ol>
+    </section>
+  )
+}
