@@ -4,6 +4,7 @@ import {
   experienceSchema,
   isVisibleOnSite,
   marginNoteSchema,
+  projectSchema,
   siteEntries,
 } from "./schemas.js";
 
@@ -84,6 +85,41 @@ describe("experience", () => {
       expect(
         experienceSchema.safeParse({ ...experience, [field]: [] }).success,
       ).toBe(false);
+    },
+  );
+});
+
+describe("project", () => {
+  const project = {
+    locale: "es",
+    visibility: "both",
+    repository: "JSisques/portfolio",
+    title: "[REAL DATA]",
+    summary: "[REAL DATA]",
+    story: "[REAL DATA]",
+  };
+
+  it("accepts a valid entry and defaults notes to []", () => {
+    const parsed = projectSchema.parse(project);
+    expect(parsed.notes).toEqual([]);
+    expect(parsed.repository).toBe("JSisques/portfolio");
+  });
+
+  it.each(["no-slash", "owner/", "/name", "owner/name/extra", "owner/na me"])(
+    "rejects a malformed repository %s",
+    (repository) => {
+      expect(projectSchema.safeParse({ ...project, repository }).success).toBe(
+        false,
+      );
+    },
+  );
+
+  it.each(["title", "summary", "story"] as const)(
+    "rejects an empty %s",
+    (field) => {
+      expect(projectSchema.safeParse({ ...project, [field]: "" }).success).toBe(
+        false,
+      );
     },
   );
 });

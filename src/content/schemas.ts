@@ -43,6 +43,15 @@ export const experienceSchema = z.object({
 });
 export type Experience = z.infer<typeof experienceSchema>;
 
+export const projectSchema = z.object({
+  ...entryBase,
+  repository: z.string().regex(/^[\w.-]+\/[\w.-]+$/),
+  title: z.string().min(1),
+  summary: z.string().min(1),
+  story: z.string().min(1),
+});
+export type ProjectNarrative = z.infer<typeof projectSchema>;
+
 interface LocalizedEntry {
   data: { locale: Locale; visibility: Visibility };
 }
