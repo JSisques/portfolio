@@ -24,7 +24,7 @@ pnpm dev
 | Command                | Action                                                             |
 | ---------------------- | ------------------------------------------------------------------ |
 | `pnpm dev`             | Start the local development server.                                |
-| `pnpm build`           | Build the production site into `dist/`.                            |
+| `pnpm build`           | Build the production site into `dist/` (pages in `dist/client/`).  |
 | `pnpm preview`         | Preview the production build locally.                              |
 | `pnpm check`           | Type-check the project with `astro check`.                         |
 | `pnpm lint`            | Lint with ESLint.                                                  |
@@ -43,7 +43,7 @@ pnpm dev
 
 All PRs to `main` are validated by a GitHub Actions pipeline: PR title (Conventional Commits), format and lint, type-check (`astro check`), full Vitest test suite, Playwright end-to-end, Lighthouse (accessibility, best practices, SEO, performance gates), and build. All checks are required to merge.
 
-Security headers and a strict Content Security Policy are defined once in `src/security/headers.ts`, written to `dist/_headers` for Cloudflare, and served by `astro preview` on Node (ADR-0033).
+Security headers and a strict Content Security Policy are defined once in `src/security/headers.ts`, written to `dist/client/_headers` for Cloudflare, and served by `astro preview` (ADR-0033). The contact endpoint sets its own response headers, because Worker responses do not get `_headers`.
 
 CodeQL scans the codebase on every PR and on a weekly schedule (ADR-0033). Dependency updates are handled by Renovate: every update is a `chore(deps):` PR, minor/patch/pin/digest updates are automerged when CI passes, and major updates open a PR for manual review (ADR-0032).
 
@@ -71,6 +71,18 @@ Two GitHub environments gate the workflows, each holding its own `CLOUDFLARE_API
 On the `jsisques-net-preview` Worker, enable both `workers.dev` and Preview URLs (Worker > Domains); without a host, a Preview has no URL and the preview job fails. The owner creates both Workers in the Cloudflare dashboard first (per-Worker scopes only apply to existing Workers; creating a Worker needs product-level Admin). The tag ruleset `protect-release-tags` restricts creation, update, and deletion of `refs/tags/v*` to admins only.
 
 For rollback, the dispatch input accepts a published release tag. The alternative emergency rollback is `wrangler rollback` (needs Editor on the Worker). Either way, also mark the bad release as a pre-release (`gh release edit <tag> --prerelease`): the daily rebuild deploys the latest release, which excludes pre-releases, so otherwise it redeploys the bad release the next morning.
+
+### Contact form
+
+The contact form posts to `/api/contact`, the only on-demand route; every page stays prerendered (ADR-0007, ADR-0014, ADR-0035). The mail adapter is selected by `MAIL_ADAPTER`: `cloudflare` (production `vars` in `wrangler.jsonc`) delivers through the `send_email` binding with the visitor as `Reply-To`; `log` (Previews), unset, or any unknown value only logs, so a Preview or a misconfigured environment never sends email (ADR-0021). `smtp` is reserved for the container target (T13). Nothing is persisted.
+
+Production setup, done once by the owner:
+
+- Enable Email Routing on `jsisques.net` and verify the destination address.
+- Set the Worker secrets on `jsisques-net`: `wrangler secret put CONTACT_RECIPIENT` (the verified destination), `MAIL_FROM` (a sender on `jsisques.net`), and `TURNSTILE_SECRET_KEY`.
+- Add the Turnstile site key as the `TURNSTILE_SITE_KEY` variable of the `production` GitHub environment. The deploy fails without it.
+
+Previews and local builds use Cloudflare's public Turnstile test keys. For `pnpm dev`, put `TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA` in `.dev.vars` (ignored by git).
 
 ### Releases
 

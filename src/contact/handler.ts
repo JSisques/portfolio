@@ -43,9 +43,15 @@ export async function handleContact(
   return json(200, { status: "sent" });
 }
 
-function json(status: number, body: unknown): Response {
+// Worker responses do not get the static `_headers` file, so the endpoint
+// sets its own: never cached (each answer is per submission), never sniffed.
+export function json(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { "content-type": "application/json; charset=utf-8" },
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store",
+      "x-content-type-options": "nosniff",
+    },
   });
 }
