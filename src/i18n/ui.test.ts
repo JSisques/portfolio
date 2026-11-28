@@ -26,4 +26,25 @@ describe("ui strings", () => {
   it("uses Spanish as the default locale", () => {
     expect(defaultLocale).toBe("es");
   });
+
+  it("localizes the contact section strings in every locale", () => {
+    const keys = [
+      "contactHeading",
+      "contactName",
+      "contactEmail",
+      "contactMessage",
+      "contactSubmit",
+      "contactLoading",
+      "contactSuccess",
+      "contactInvalid",
+      "contactSpam",
+      "contactError",
+      "contactPrivacy",
+    ] as const;
+    for (const locale of locales) {
+      for (const key of keys) {
+        expect(t(locale, key).trim(), `${locale}.${key}`).not.toHaveLength(0);
+      }
+    }
+  });
 });

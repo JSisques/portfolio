@@ -1,0 +1,92 @@
+---
+import type { Locale } from "../i18n/locales.js";
+import { t } from "../i18n/ui.js";
+
+// S1, S2, S6: presentational contact section. The page hands in the locale;
+// the site key is a build-time env var (T4 deploys the real one) with
+// Cloudflare's public always-pass test key as the fallback.
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const siteKey =
+  import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA";
+---
+
+<section id="contact" aria-labelledby="contact-heading">
+  <h2 id="contact-heading" class="text-3xl font-semibold">
+    {t(locale, "contactHeading")}
+  </h2>
+  <p class="mt-4 flex flex-wrap gap-x-4">
+    <a href="mailto:hello@jsisques.net">hello@jsisques.net</a>
+    <a href="[REAL DATA]">LinkedIn</a>
+    <a href="https://github.com/JSisques">github.com/JSisques</a>
+  </p>
+  <form
+    id="contact-form"
+    method="post"
+    action="/api/contact"
+    class="mt-8 space-y-4"
+    data-loading={t(locale, "contactLoading")}
+    data-success={t(locale, "contactSuccess")}
+    data-invalid={t(locale, "contactInvalid")}
+    data-spam={t(locale, "contactSpam")}
+    data-error={t(locale, "contactError")}
+  >
+    <div>
+      <label for="contact-name" class="block font-semibold">
+        {t(locale, "contactName")}
+      </label>
+      <input
+        id="contact-name"
+        name="name"
+        type="text"
+        required
+        autocomplete="name"
+        class="mt-1 min-h-11 w-full rounded-sm border border-heading bg-surface px-3"
+      />
+    </div>
+    <div>
+      <label for="contact-email" class="block font-semibold">
+        {t(locale, "contactEmail")}
+      </label>
+      <input
+        id="contact-email"
+        name="email"
+        type="email"
+        required
+        autocomplete="email"
+        class="mt-1 min-h-11 w-full rounded-sm border border-heading bg-surface px-3"
+      />
+    </div>
+    <div>
+      <label for="contact-message" class="block font-semibold">
+        {t(locale, "contactMessage")}
+      </label>
+      <textarea
+        id="contact-message"
+        name="message"
+        required
+        rows="5"
+        class="mt-1 w-full rounded-sm border border-heading bg-surface px-3 py-2"
+      ></textarea>
+    </div>
+    <div class="cf-turnstile" data-sitekey={siteKey}></div>
+    <p class="text-sm">{t(locale, "contactPrivacy")}</p>
+    <button
+      id="contact-submit"
+      type="submit"
+      class="min-h-11 rounded-sm bg-accent px-4 font-semibold text-on-accent"
+    >
+      {t(locale, "contactSubmit")}
+    </button>
+    <p id="contact-status" aria-live="polite"></p>
+  </form>
+  <script
+    src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+    async
+    defer
+    is:inline></script>
+  <script src="./contact-form.ts"></script>
+</section>

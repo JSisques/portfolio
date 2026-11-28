@@ -1,4 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
+import { type Page } from "@playwright/test";
+import { test, expect } from "./test-base.js";
 import { securityHeaders } from "../../src/security/headers.js";
 
 // ADR-0033: every response carries the security headers and the strict CSP
