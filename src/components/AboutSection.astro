@@ -1,0 +1,27 @@
+---
+import type { About } from "../content/schemas.js";
+import type { Locale } from "../i18n/locales.js";
+import { t } from "../i18n/ui.js";
+import MarginNotes from "./MarginNotes.astro";
+
+// Presentational (L3 in the task doc): the page reads the collection and
+// hands the visible entry in as a prop; no collection access here.
+interface Props {
+  locale: Locale;
+  about: About;
+}
+
+const { locale, about } = Astro.props;
+---
+
+<section id="about" aria-labelledby="about-heading">
+  <h2 id="about-heading" class="text-3xl font-semibold">
+    {t(locale, "aboutHeading")}
+  </h2>
+  <div class="relative mt-4 space-y-4">
+    <p>{about.summary}</p>
+    <p>{about.stack}</p>
+    <p>{about.workingStyle}</p>
+    <MarginNotes notes={about.notes} />
+  </div>
+</section>
