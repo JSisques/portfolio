@@ -11,6 +11,10 @@ import { getCollection } from "astro:content";
 import { siteEntries } from "../../content/schemas.js";
 import AboutSection from "../../components/AboutSection.astro";
 import ExperienceSection from "../../components/ExperienceSection.astro";
+import ProjectsSection from "../../components/ProjectsSection.astro";
+import { featuredRepositories } from "../../projects/featured.js";
+import { loadRepositoryData } from "../../projects/load.js";
+import { buildProjects } from "../../projects/build.js";
 
 export function getStaticPaths() {
   return locales.map((locale) => ({
@@ -27,6 +31,16 @@ const about = siteEntries(await getCollection("about"), locale)[0]?.data;
 const experience = siteEntries(await getCollection("experience"), locale).map(
   (entry) => entry.data,
 );
+// ADR-0005, ADR-0036: GitHub data is read at build time; any failure throws
+// and fails the build.
+const projects = buildProjects(
+  featuredRepositories,
+  siteEntries(await getCollection("projects"), locale).map(
+    (entry) => entry.data,
+  ),
+  await loadRepositoryData(featuredRepositories),
+  locale,
+);
 ---
 
 <BaseLayout
@@ -38,5 +52,6 @@ const experience = siteEntries(await getCollection("experience"), locale).map(
   <div class="mt-10 space-y-16">
     {about && <AboutSection locale={locale} about={about} />}
     <ExperienceSection locale={locale} entries={experience} />
+    <ProjectsSection locale={locale} projects={projects} />
   </div>
 </BaseLayout>
