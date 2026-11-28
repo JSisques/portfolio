@@ -46,17 +46,20 @@ if (form && submit && statusRegion) {
           status?: string;
           fields?: string[];
         } | null;
+        clearInvalidFields();
+        const invalid =
+          payload?.status === "invalid" && Array.isArray(payload.fields);
+        // Turnstile tokens verify once. Every answer except "invalid"
+        // (rejected before verification) consumed the token, so the widget
+        // is reset before the visitor retries.
+        if (!invalid) {
+          (window as { turnstile?: { reset(): void } }).turnstile?.reset();
+        }
         if (payload?.status === "sent") {
-          clearInvalidFields();
           announce(messages.success);
           form.reset();
-          (window as { turnstile?: { reset(): void } }).turnstile?.reset();
-        } else if (
-          payload?.status === "invalid" &&
-          Array.isArray(payload.fields)
-        ) {
+        } else if (invalid && payload?.fields) {
           let firstInvalid: HTMLElement | null = null;
-          clearInvalidFields();
           for (const name of payload.fields) {
             const field = form.elements.namedItem(name);
             if (field instanceof HTMLElement) {

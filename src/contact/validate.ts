@@ -19,8 +19,13 @@ export function validateSubmission(form: FormData): ValidationResult {
   const message = stringValue(form.get("message"));
 
   const fields: ContactField[] = [];
-  // The name becomes the mail subject, so line breaks are rejected.
-  if (name.length < 1 || name.length > 100 || /[\r\n]/.test(name)) {
+  // The name becomes the mail subject, so control characters (line breaks
+  // included) and Unicode line separators are rejected.
+  if (
+    name.length < 1 ||
+    name.length > 100 ||
+    /[\p{Cc}\u2028\u2029]/u.test(name)
+  ) {
     fields.push("name");
   }
   if (email.length > 254 || !EMAIL_PATTERN.test(email)) {

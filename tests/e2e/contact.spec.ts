@@ -158,6 +158,68 @@ for (const locale of ["es", "en"] as const) {
       await expect(page.locator("#contact-message")).toHaveValue(MESSAGE);
     });
 
+    // A Turnstile token is valid for one verification only, so every answer
+    // that consumed it must reset the widget before the visitor retries.
+    for (const [status, state, key] of [
+      [403, "spam", "contactSpam"],
+      [502, "error", "contactError"],
+    ] as const) {
+      test(`resets Turnstile after the ${state} state so a retry gets a fresh token`, async ({
+        page,
+      }) => {
+        await page.addInitScript(() => {
+          const counter = { resets: 0 };
+          Object.assign(window, {
+            __turnstileResets: counter,
+            turnstile: { reset: () => counter.resets++ },
+          });
+        });
+        await stubContactRoutes(page, json(status, { status: state }));
+        await page.goto(`/${locale}/`);
+        await fillForm(page);
+        await page
+          .getByRole("button", { name: t(locale, "contactSubmit") })
+          .click();
+        await expect(page.locator("#contact-status")).toHaveText(
+          t(locale, key),
+        );
+        const resets = await page.evaluate(
+          () =>
+            (window as unknown as { __turnstileResets: { resets: number } })
+              .__turnstileResets.resets,
+        );
+        expect(resets).toBe(1);
+      });
+    }
+
+    test("clears invalid marks when a later attempt fails for another reason", async ({
+      page,
+    }) => {
+      let attempt = 0;
+      await stubContactRoutes(page, (route) =>
+        attempt++ === 0
+          ? json(400, { status: "invalid", fields: ["email"] })(route)
+          : json(403, { status: "spam" })(route),
+      );
+      await page.goto(`/${locale}/`);
+      await fillForm(page);
+      const submit = page.getByRole("button", {
+        name: t(locale, "contactSubmit"),
+      });
+      await submit.click();
+      await expect(page.locator("#contact-email")).toHaveAttribute(
+        "aria-invalid",
+        "true",
+      );
+      await submit.click();
+      await expect(page.locator("#contact-status")).toHaveText(
+        t(locale, "contactSpam"),
+      );
+      await expect(page.locator("#contact-email")).not.toHaveAttribute(
+        "aria-invalid",
+      );
+    });
+
     test("shows the delivery error state when the request fails", async ({
       page,
     }) => {

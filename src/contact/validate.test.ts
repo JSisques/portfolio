@@ -61,6 +61,16 @@ describe("validateSubmission", () => {
     }
   });
 
+  it("rejects a name with any control or line-separator character", () => {
+    for (const char of ["\t", "\u0000", "\u0085", "\u2028", "\u2029"]) {
+      const name = `Ada${char}Lovelace`;
+      expect(validateSubmission(form({ ...validFields, name }))).toEqual({
+        ok: false,
+        fields: ["name"],
+      });
+    }
+  });
+
   it("rejects a name longer than 100 characters", () => {
     expect(
       validateSubmission(form({ ...validFields, name: "n".repeat(101) })),
