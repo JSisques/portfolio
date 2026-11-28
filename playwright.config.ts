@@ -21,6 +21,8 @@ export default defineConfig({
   ],
   webServer: {
     command: "pnpm build && pnpm preview --port 4321",
+    // ADR-0036: the build reads GitHub data from a fixture, never the API.
+    env: { GITHUB_DATA_FIXTURE: "tests/e2e/fixtures/github.json" },
     timeout: 120_000,
     port: 4321,
     reuseExistingServer: !CI,

@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   experimental_AstroContainer as AstroContainer,
   type ContainerRenderOptions,
@@ -8,6 +8,13 @@ import {
 // and asserts behavior, not static copy.
 //
 // ADR-0026: locale-prefixed routes, hreflang alternates, x-default -> Spanish.
+
+// No featured repositories: this test covers the page shell, never calls the
+// GitHub API, and does not depend on content collections (empty under Vitest).
+// The projects section is covered by its integration test and by e2e.
+vi.mock("../../src/projects/featured.js", () => ({
+  featuredRepositories: [],
+}));
 
 import Page from "../../src/pages/[lang]/index.astro";
 import { locales, type Locale } from "../../src/i18n/locales.js";

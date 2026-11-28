@@ -10,6 +10,13 @@ interface UiStrings {
   experienceHeading: string;
   responsibilitiesHeading: string;
   impactHeading: string;
+  projectsHeading: string;
+  projectStoryHeading: string;
+  projectLanguage: string;
+  projectStars: string;
+  projectUpdated: string;
+  projectRepositoryLink: string;
+  projectHomepageLink: string;
 }
 
 const es: UiStrings = {
@@ -22,6 +29,13 @@ const es: UiStrings = {
   experienceHeading: "Experiencia",
   responsibilitiesHeading: "Responsabilidades",
   impactHeading: "Impacto",
+  projectsHeading: "Proyectos",
+  projectStoryHeading: "Cómo se construyó",
+  projectLanguage: "Lenguaje",
+  projectStars: "Estrellas",
+  projectUpdated: "Última actualización",
+  projectRepositoryLink: "Repositorio",
+  projectHomepageLink: "Sitio web",
 };
 
 const en: UiStrings = {
@@ -34,6 +48,13 @@ const en: UiStrings = {
   experienceHeading: "Experience",
   responsibilitiesHeading: "Responsibilities",
   impactHeading: "Impact",
+  projectsHeading: "Projects",
+  projectStoryHeading: "How it was built",
+  projectLanguage: "Language",
+  projectStars: "Stars",
+  projectUpdated: "Last update",
+  projectRepositoryLink: "Repository",
+  projectHomepageLink: "Website",
 };
 
 export const ui: Record<Locale, UiStrings> = { es, en };

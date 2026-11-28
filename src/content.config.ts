@@ -1,6 +1,10 @@
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
-import { aboutSchema, experienceSchema } from "./content/schemas.js";
+import {
+  aboutSchema,
+  experienceSchema,
+  projectSchema,
+} from "./content/schemas.js";
 
 // One file per entry and locale, for example `about/es.yaml` or
 // `experience/en/role-slug.yaml`.
@@ -14,4 +18,9 @@ const experience = defineCollection({
   schema: experienceSchema,
 });
 
-export const collections = { about, experience };
+const projects = defineCollection({
+  loader: glob({ pattern: "**/*.yaml", base: "./src/content/projects" }),
+  schema: projectSchema,
+});
+
+export const collections = { about, experience, projects };
